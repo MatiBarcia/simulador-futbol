@@ -6,3 +6,6 @@ dist/
 .wrangler/
 .DS_Store
 *.log
+
+# Lo genera `npm run precompute` (en la nube lo recalcula el workflow)
+public/data/lpf/simulation.json

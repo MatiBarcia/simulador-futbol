@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
-    "ingest": "node scripts/ingest.ts"
+    "ingest": "node scripts/ingest.ts",
+    "precompute": "node scripts/precompute.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

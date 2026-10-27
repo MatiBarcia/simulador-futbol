@@ -14,6 +14,9 @@ const FILES: [string, string, number][] = [
   ['arg.1', 'standings', 2025],
   ['arg.1', 'scoreboard', 2026],
   ['arg.1', 'standings', 2026],
+  ['arg.copa', 'scoreboard', 2026],
+  ['conmebol.libertadores', 'scoreboard', 2026],
+  ['conmebol.sudamericana', 'scoreboard', 2026],
 ];
 
 const team = (t: EspnTeam): EspnTeam => ({ id: t.id, displayName: t.displayName, shortDisplayName: t.shortDisplayName, logo: t.logo });

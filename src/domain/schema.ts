@@ -4,7 +4,7 @@ import type { SeasonData } from './types.ts';
 const teamId = z.string().regex(/^[a-z0-9-]+$/);
 
 export const seasonDataSchema = z.object({
-  competition: z.literal('lpf'),
+  competition: z.enum(['lpf', 'copa-argentina', 'libertadores', 'sudamericana']),
   season: z.number().int(),
   provider: z.string(),
   generatedAt: z.iso.datetime(),
@@ -18,7 +18,7 @@ export const seasonDataSchema = z.object({
     z.object({
       id: z.string(),
       tournamentId: z.string(),
-      phase: z.enum(['regular', 'round-of-16', 'quarterfinals', 'semifinals', 'final']),
+      phase: z.enum(['regular', 'round-of-64', 'round-of-32', 'round-of-16', 'quarterfinals', 'semifinals', 'final']),
       round: z.number().int().positive().optional(),
       date: z.string(),
       homeId: teamId,

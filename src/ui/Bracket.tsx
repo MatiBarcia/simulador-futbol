@@ -4,6 +4,8 @@ import { dateFormat } from './format.ts';
 import { TeamCell } from './TeamCell.tsx';
 
 const ROUND_NAMES: Record<BracketRound['phase'], string> = {
+  'round-of-64': '32avos',
+  'round-of-32': '16avos',
   'round-of-16': 'Octavos',
   quarterfinals: 'Cuartos',
   semifinals: 'Semis',

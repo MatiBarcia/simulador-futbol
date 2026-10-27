@@ -1,6 +1,16 @@
-import type { CompetitionId, Team, Tournament } from '../../domain/types.ts';
+import type { CompetitionId, Match, Team, Tournament } from '../../domain/types.ts';
 import type { DataProvider, ProviderSeason } from '../DataProvider.ts';
-import { espnLeaguesForSeason, mapEvent, mapGroups, mapTeam, PROVIDER_ID, TOURNAMENT_NAMES, unknownTeams } from './mapping.ts';
+import {
+  ESPN_CUP_LEAGUES,
+  espnLeaguesForSeason,
+  mapCupSlug,
+  mapEvent,
+  mapGroups,
+  mapTeam,
+  PROVIDER_ID,
+  TOURNAMENT_NAMES,
+  unknownTeams,
+} from './mapping.ts';
 import type { EspnScoreboard, EspnStandings } from './types.ts';
 
 const BASE = 'https://site.api.espn.com/apis';
@@ -16,14 +26,21 @@ export class EspnProvider implements DataProvider {
   }
 
   async getSeason(competition: CompetitionId, season: number): Promise<ProviderSeason> {
-    if (competition !== 'lpf') throw new Error(`ESPN: competencia no soportada: ${competition}`);
+    return competition === 'lpf' ? this.getLeagueSeason(season) : this.getCupSeason(competition, season);
+  }
+
+  private scoreboard(league: string, season: number) {
+    return this.fetchJson<EspnScoreboard>(`${BASE}/site/v2/sports/soccer/${league}/scoreboard?dates=${season}&limit=1000`);
+  }
+
+  private async getLeagueSeason(season: number): Promise<ProviderSeason> {
     const teams = new Map<string, Team>();
     const tournaments = new Map<string, Tournament>();
     const matches: ProviderSeason['matches'] = [];
 
     for (const league of espnLeaguesForSeason(season)) {
       const [scoreboard, standings] = await Promise.all([
-        this.fetchJson<EspnScoreboard>(`${BASE}/site/v2/sports/soccer/${league}/scoreboard?dates=${season}&limit=1000`),
+        this.scoreboard(league, season),
         this.fetchJson<EspnStandings>(`${BASE}/v2/sports/soccer/${league}/standings?season=${season}`),
       ]);
       const espnTeams = scoreboard.events.flatMap((e) => e.competitions[0].competitors.map((c) => c.team));
@@ -48,6 +65,21 @@ export class EspnProvider implements DataProvider {
     }
 
     return { teams: [...teams.values()], tournaments: [...tournaments.values()], matches };
+  }
+
+  /** Copas: solo las fases de eliminación que nos interesan. Los equipos de otras categorías o países tienen id provisorio. */
+  private async getCupSeason(competition: Exclude<CompetitionId, 'lpf'>, season: number): Promise<ProviderSeason> {
+    const league = ESPN_CUP_LEAGUES[competition];
+    const scoreboard = await this.scoreboard(league, season);
+    const teams = new Map<string, Team>();
+    const matches: Match[] = [];
+    for (const e of scoreboard.events) {
+      const where = mapCupSlug(competition, e.season.slug);
+      if (!where) continue;
+      matches.push(mapEvent(league, e, where));
+      for (const c of e.competitions[0].competitors) teams.set(mapTeam(c.team).id, mapTeam(c.team));
+    }
+    return { teams: [...teams.values()], tournaments: [{ id: competition, name: TOURNAMENT_NAMES[competition] }], matches };
   }
 }
 

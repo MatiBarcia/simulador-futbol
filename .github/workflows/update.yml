@@ -1,0 +1,79 @@
+# Cada 5 minutos: baja los datos de ESPN y, si cambió algo, recalcula la simulación y publica el sitio en GitHub Pages.
+# Los datos nuevos van directo al sitio publicado (no se commitean), así el historial de git no se llena de cambios automáticos.
+name: Actualizar y publicar
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # GitHub no garantiza la puntualidad: a veces se atrasa unos minutos
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Nunca dos corridas a la vez; una corrida nueva espera a que termine la anterior.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  SITE: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      deploy: ${{ steps.check.outputs.deploy }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      - name: Bajar datos de ESPN
+        run: npm run ingest
+
+      - name: ¿Cambió algo respecto del sitio publicado?
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            node scripts/should-deploy.ts "$SITE"
+          else
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Tests
+        if: github.event_name != 'schedule'
+        run: npm test
+
+      - name: Simulación (reutiliza la publicada si los resultados no cambiaron)
+        if: steps.check.outputs.deploy == 'true'
+        run: npm run precompute -- --previous "$SITE/data/lpf/simulation.json"
+
+      - name: Build
+        if: steps.check.outputs.deploy == 'true'
+        run: npm run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.check.outputs.deploy == 'true'
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    if: needs.build.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

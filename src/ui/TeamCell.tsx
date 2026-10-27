@@ -1,10 +1,5 @@
 import type { Team } from '../domain/types.ts';
-
-/** Los escudos de ESPN vienen en 500 px; el combiner de ESPN los achica. */
-const smallLogo = (url: string) => {
-  const path = /a\.espncdn\.com(\/i\/teamlogos\/.+\.png)$/.exec(url)?.[1];
-  return path ? `https://a.espncdn.com/combiner/i?img=${path}&w=48&h=48` : url;
-};
+import { smallLogo } from './format.ts';
 
 export function TeamCell({ team, tag }: { team: Team | undefined; tag?: string }) {
   if (!team) return <span className="team">?</span>;

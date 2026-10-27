@@ -1,0 +1,141 @@
+{
+  "competition": "sudamericana",
+  "season": 2026,
+  "provider": "espn",
+  "generatedAt": "2026-10-27T02:48:56.231Z",
+  "teams": [
+    {
+      "id": "atletico-mg",
+      "name": "Atlético-MG",
+      "shortName": "Atlético-MG",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7632.png"
+    },
+    {
+      "id": "boca-juniors",
+      "name": "Boca Juniors",
+      "shortName": "Boca",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/5.png"
+    },
+    {
+      "id": "bolivar",
+      "name": "Bolívar",
+      "shortName": "Bolívar",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2681.png"
+    },
+    {
+      "id": "botafogo",
+      "name": "Botafogo",
+      "shortName": "Botafogo",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6086.png"
+    },
+    {
+      "id": "cienciano-del-cusco",
+      "name": "Cienciano del Cusco",
+      "shortName": "Cienciano",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3372.png"
+    },
+    {
+      "id": "club-olimpia",
+      "name": "Club Olimpia",
+      "shortName": "Olimpia",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2675.png"
+    },
+    {
+      "id": "deportivo-recoleta",
+      "name": "Deportivo Recoleta",
+      "shortName": "Dep. Recoleta",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/22517.png"
+    },
+    {
+      "id": "independiente-santa-fe",
+      "name": "Independiente Santa Fe",
+      "shortName": "Santa Fe",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/5488.png"
+    },
+    {
+      "id": "macara",
+      "name": "Macará",
+      "shortName": "Macará",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18439.png"
+    },
+    {
+      "id": "montevideo-city-torque",
+      "name": "Montevideo City Torque",
+      "shortName": "MC Torque",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/19002.png"
+    },
+    {
+      "id": "red-bull-bragantino",
+      "name": "Red Bull Bragantino",
+      "shortName": "Bragantino",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6079.png"
+    },
+    {
+      "id": "river-plate",
+      "name": "River Plate",
+      "shortName": "River",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/16.png"
+    },
+    {
+      "id": "santos",
+      "name": "Santos",
+      "shortName": "Santos",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2674.png"
+    },
+    {
+      "id": "sao-paulo",
+      "name": "São Paulo",
+      "shortName": "São Paulo",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2026.png"
+    },
+    {
+      "id": "tigre",
+      "name": "Tigre",
+      "shortName": "Tigre",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7767.png"
+    },
+    {
+      "id": "vasco-da-gama",
+      "name": "Vasco da Gama",
+      "shortName": "Vasco",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3454.png"
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "sudamericana",
+      "name": "Copa Sudamericana"
+    }
+  ],
+  "matches": [
+    {"id":"espn-401903297","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-11T22:00Z","homeId":"boca-juniors","awayId":"deportivo-recoleta","status":"finished","homeGoals":3,"awayGoals":1,"source":{"provider":"espn","externalId":"401903297"}},
+    {"id":"espn-401903296","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-12T00:30Z","homeId":"bolivar","awayId":"sao-paulo","status":"finished","homeGoals":1,"awayGoals":1,"source":{"provider":"espn","externalId":"401903296"}},
+    {"id":"espn-401902573","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-12T22:00Z","homeId":"tigre","awayId":"montevideo-city-torque","status":"finished","homeGoals":0,"awayGoals":1,"source":{"provider":"espn","externalId":"401902573"}},
+    {"id":"espn-401902743","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-12T22:00Z","homeId":"red-bull-bragantino","awayId":"atletico-mg","status":"finished","homeGoals":0,"awayGoals":1,"source":{"provider":"espn","externalId":"401902743"}},
+    {"id":"espn-401902572","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-13T22:00Z","homeId":"santos","awayId":"macara","status":"finished","homeGoals":2,"awayGoals":1,"source":{"provider":"espn","externalId":"401902572"}},
+    {"id":"espn-401902742","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-13T22:00Z","homeId":"vasco-da-gama","awayId":"club-olimpia","status":"finished","homeGoals":0,"awayGoals":0,"source":{"provider":"espn","externalId":"401902742"}},
+    {"id":"espn-401902715","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-14T00:30Z","homeId":"cienciano-del-cusco","awayId":"botafogo","status":"finished","homeGoals":6,"awayGoals":1,"source":{"provider":"espn","externalId":"401902715"}},
+    {"id":"espn-401903231","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-18T22:00Z","homeId":"deportivo-recoleta","awayId":"boca-juniors","status":"finished","homeGoals":0,"awayGoals":4,"source":{"provider":"espn","externalId":"401903231"}},
+    {"id":"espn-401903294","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-19T00:30Z","homeId":"sao-paulo","awayId":"bolivar","status":"finished","homeGoals":3,"awayGoals":1,"source":{"provider":"espn","externalId":"401903294"}},
+    {"id":"espn-401902714","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-19T22:00Z","homeId":"atletico-mg","awayId":"red-bull-bragantino","status":"finished","homeGoals":2,"awayGoals":2,"source":{"provider":"espn","externalId":"401902714"}},
+    {"id":"espn-401902571","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-20T00:30Z","homeId":"montevideo-city-torque","awayId":"tigre","status":"finished","homeGoals":2,"awayGoals":1,"source":{"provider":"espn","externalId":"401902571"}},
+    {"id":"espn-401903232","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-20T00:30Z","homeId":"independiente-santa-fe","awayId":"river-plate","status":"finished","homeGoals":0,"awayGoals":0,"source":{"provider":"espn","externalId":"401903232"}},
+    {"id":"espn-401902449","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-20T22:00Z","homeId":"macara","awayId":"santos","status":"finished","homeGoals":0,"awayGoals":0,"source":{"provider":"espn","externalId":"401902449"}},
+    {"id":"espn-401902740","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-20T22:00Z","homeId":"club-olimpia","awayId":"vasco-da-gama","status":"finished","homeGoals":1,"awayGoals":4,"source":{"provider":"espn","externalId":"401902740"}},
+    {"id":"espn-401902741","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-21T00:30Z","homeId":"botafogo","awayId":"cienciano-del-cusco","status":"finished","homeGoals":1,"awayGoals":0,"source":{"provider":"espn","externalId":"401902741"}},
+    {"id":"espn-401903295","tournamentId":"sudamericana","phase":"round-of-16","date":"2026-08-27T00:30Z","homeId":"river-plate","awayId":"independiente-santa-fe","status":"finished","homeGoals":1,"awayGoals":1,"penalties":{"home":7,"away":8},"source":{"provider":"espn","externalId":"401903295"}},
+    {"id":"espn-401913960","tournamentId":"sudamericana","phase":"quarterfinals","date":"2026-09-08T22:00Z","homeId":"independiente-santa-fe","awayId":"vasco-da-gama","status":"finished","homeGoals":0,"awayGoals":0,"source":{"provider":"espn","externalId":"401913960"}},
+    {"id":"espn-401912542","tournamentId":"sudamericana","phase":"quarterfinals","date":"2026-09-09T00:30Z","homeId":"boca-juniors","awayId":"sao-paulo","status":"finished","homeGoals":1,"awayGoals":0,"source":{"provider":"espn","externalId":"401912542"}},
+    {"id":"espn-401913073","tournamentId":"sudamericana","phase":"quarterfinals","date":"2026-09-09T22:00Z","homeId":"santos","awayId":"atletico-mg","status":"finished","homeGoals":2,"awayGoals":0,"source":{"provider":"espn","externalId":"401913073"}},
+    {"id":"espn-401913074","tournamentId":"sudamericana","phase":"quarterfinals","date":"2026-09-11T00:30Z","homeId":"cienciano-del-cusco","awayId":"montevideo-city-torque","status":"finished","homeGoals":2,"awayGoals":0,"source":{"provider":"espn","externalId":"401913074"}},
+    {"id":"espn-401913959","tournamentId":"sudamericana","phase":"quarterfinals","date":"2026-09-15T22:00Z","homeId":"vasco-da-gama","awayId":"independiente-santa-fe","status":"finished","homeGoals":2,"awayGoals":0,"source":{"provider":"espn","externalId":"401913959"}},
+    {"id":"espn-401912524","tournamentId":"sudamericana","phase":"quarterfinals","date":"2026-09-16T00:30Z","homeId":"sao-paulo","awayId":"boca-juniors","status":"finished","homeGoals":1,"awayGoals":1,"source":{"provider":"espn","externalId":"401912524"}},
+    {"id":"espn-401913071","tournamentId":"sudamericana","phase":"quarterfinals","date":"2026-09-16T22:00Z","homeId":"atletico-mg","awayId":"santos","status":"finished","homeGoals":4,"awayGoals":2,"penalties":{"home":3,"away":1},"source":{"provider":"espn","externalId":"401913071"}},
+    {"id":"espn-401913072","tournamentId":"sudamericana","phase":"quarterfinals","date":"2026-09-18T00:30Z","homeId":"montevideo-city-torque","awayId":"cienciano-del-cusco","status":"finished","homeGoals":3,"awayGoals":0,"source":{"provider":"espn","externalId":"401913072"}},
+    {"id":"espn-401913958","tournamentId":"sudamericana","phase":"semifinals","date":"2026-10-14T00:30Z","homeId":"boca-juniors","awayId":"vasco-da-gama","status":"finished","homeGoals":0,"awayGoals":1,"source":{"provider":"espn","externalId":"401913958"}},
+    {"id":"espn-401913916","tournamentId":"sudamericana","phase":"semifinals","date":"2026-10-14T22:00Z","homeId":"atletico-mg","awayId":"montevideo-city-torque","status":"finished","homeGoals":3,"awayGoals":0,"source":{"provider":"espn","externalId":"401913916"}},
+    {"id":"espn-401913957","tournamentId":"sudamericana","phase":"semifinals","date":"2026-10-21T00:30Z","homeId":"vasco-da-gama","awayId":"boca-juniors","status":"finished","homeGoals":1,"awayGoals":3,"source":{"provider":"espn","externalId":"401913957"}},
+    {"id":"espn-401913956","tournamentId":"sudamericana","phase":"semifinals","date":"2026-10-21T22:00Z","homeId":"montevideo-city-torque","awayId":"atletico-mg","status":"finished","homeGoals":2,"awayGoals":0,"source":{"provider":"espn","externalId":"401913956"}},
+    {"id":"espn-401913961","tournamentId":"sudamericana","phase":"final","date":"2026-11-21T20:00Z","homeId":"atletico-mg","awayId":"boca-juniors","status":"scheduled","source":{"provider":"espn","externalId":"401913961"}}
+  ]
+}

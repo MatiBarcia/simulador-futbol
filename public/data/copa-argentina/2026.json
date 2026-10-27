@@ -1,0 +1,456 @@
+{
+  "competition": "copa-argentina",
+  "season": 2026,
+  "provider": "espn",
+  "generatedAt": "2026-10-27T02:48:55.268Z",
+  "teams": [
+    {
+      "id": "acassuso",
+      "name": "Acassuso",
+      "shortName": "Acassuso",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10145.png"
+    },
+    {
+      "id": "agropecuario",
+      "name": "Agropecuario",
+      "shortName": "Agropecuario",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/13913.png"
+    },
+    {
+      "id": "aldosivi",
+      "name": "Aldosivi",
+      "shortName": "Aldosivi",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9739.png"
+    },
+    {
+      "id": "argentino-de-merlo",
+      "name": "Argentino de Merlo",
+      "shortName": "Argentino Merlo",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17700.png"
+    },
+    {
+      "id": "argentino-monte-maiz",
+      "name": "Argentino Monte Maíz",
+      "shortName": "Argentino MM"
+    },
+    {
+      "id": "argentinos-juniors",
+      "name": "Argentinos Juniors",
+      "shortName": "Argentinos",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/3.png"
+    },
+    {
+      "id": "atlanta",
+      "name": "Atlanta",
+      "shortName": "Atlanta",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10146.png"
+    },
+    {
+      "id": "atletico-rafaela",
+      "name": "Atletico Rafaela",
+      "shortName": "Rafaela",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9747.png"
+    },
+    {
+      "id": "atletico-tucuman",
+      "name": "Atlético Tucumán",
+      "shortName": "Atl. Tucumán",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9785.png"
+    },
+    {
+      "id": "banfield",
+      "name": "Banfield",
+      "shortName": "Banfield",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/235.png"
+    },
+    {
+      "id": "barracas-central",
+      "name": "Barracas Central",
+      "shortName": "Barracas C.",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10060.png"
+    },
+    {
+      "id": "belgrano",
+      "name": "Belgrano",
+      "shortName": "Belgrano",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/4.png"
+    },
+    {
+      "id": "boca-juniors",
+      "name": "Boca Juniors",
+      "shortName": "Boca",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/5.png"
+    },
+    {
+      "id": "camioneros",
+      "name": "Camioneros",
+      "shortName": "Camioneros",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18662.png"
+    },
+    {
+      "id": "central-cordoba-sde",
+      "name": "Central Córdoba (SdE)",
+      "shortName": "Central Cba.",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11989.png"
+    },
+    {
+      "id": "chaco-for-ever",
+      "name": "Chaco For Ever",
+      "shortName": "Chaco",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11963.png"
+    },
+    {
+      "id": "ciudad-de-bolivar",
+      "name": "Ciudad de Bolívar",
+      "shortName": "Ciudad Bolívar",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/21799.png"
+    },
+    {
+      "id": "claypole",
+      "name": "Claypole",
+      "shortName": "Claypole",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10102.png"
+    },
+    {
+      "id": "defensa-y-justicia",
+      "name": "Defensa y Justicia",
+      "shortName": "Defensa",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/8950.png"
+    },
+    {
+      "id": "deportivo-armenio",
+      "name": "Deportivo Armenio",
+      "shortName": "Armenio",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10152.png"
+    },
+    {
+      "id": "deportivo-madryn",
+      "name": "Deportivo Madryn",
+      "shortName": "Dep. Madryn",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18260.png"
+    },
+    {
+      "id": "deportivo-maipu",
+      "name": "Deportivo Maipú",
+      "shortName": "Maipú",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11978.png"
+    },
+    {
+      "id": "deportivo-moron",
+      "name": "Deportivo Morón",
+      "shortName": "Morón",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10154.png"
+    },
+    {
+      "id": "deportivo-riestra",
+      "name": "Deportivo Riestra",
+      "shortName": "Riestra",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17702.png"
+    },
+    {
+      "id": "deportivo-rincon",
+      "name": "Deportivo Rincón",
+      "shortName": "Rincón"
+    },
+    {
+      "id": "estudiantes-buenos-aires",
+      "name": "Estudiantes (Buenos Aires)",
+      "shortName": "Estudiantes",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17352.png"
+    },
+    {
+      "id": "estudiantes-lp",
+      "name": "Estudiantes (LP)",
+      "shortName": "Estudiantes",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/8.png"
+    },
+    {
+      "id": "estudiantes-rc",
+      "name": "Estudiantes (Río Cuarto)",
+      "shortName": "Est. Río IV",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/19685.png"
+    },
+    {
+      "id": "gimnasia-lp",
+      "name": "Gimnasia (LP)",
+      "shortName": "Gimnasia",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9.png"
+    },
+    {
+      "id": "gimnasia-mendoza",
+      "name": "Gimnasia (Mendoza)",
+      "shortName": "Gimnasia (M)",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11972.png"
+    },
+    {
+      "id": "gimnasia-chivilcoy",
+      "name": "Gimnasia Chivilcoy",
+      "shortName": "Chivilcoy"
+    },
+    {
+      "id": "gimnasia-y-esgrima-jujuy",
+      "name": "Gimnasia y Esgrima (Jujuy)",
+      "shortName": "Gimnasia J.",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/5263.png"
+    },
+    {
+      "id": "gimnasia-y-tiro-salta",
+      "name": "Gimnasia y Tiro (Salta)",
+      "shortName": "G y T (Salta)",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10743.png"
+    },
+    {
+      "id": "godoy-cruz",
+      "name": "Godoy Cruz",
+      "shortName": "Godoy Cruz",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/6756.png"
+    },
+    {
+      "id": "huracan",
+      "name": "Huracán",
+      "shortName": "Huracán",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10.png"
+    },
+    {
+      "id": "independiente",
+      "name": "Independiente",
+      "shortName": "Independiente",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11.png"
+    },
+    {
+      "id": "independiente-rivadavia",
+      "name": "Independiente Rivadavia",
+      "shortName": "Ind. Rivadavia",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9744.png"
+    },
+    {
+      "id": "instituto",
+      "name": "Instituto",
+      "shortName": "Instituto",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2975.png"
+    },
+    {
+      "id": "ituzaingo",
+      "name": "Ituzaingó",
+      "shortName": "Ituzaingó",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10105.png"
+    },
+    {
+      "id": "lanus",
+      "name": "Lanús",
+      "shortName": "Lanús",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/12.png"
+    },
+    {
+      "id": "midland",
+      "name": "Midland",
+      "shortName": "Midland",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10109.png"
+    },
+    {
+      "id": "newells-old-boys",
+      "name": "Newell's Old Boys",
+      "shortName": "Newell's",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/14.png"
+    },
+    {
+      "id": "olimpo",
+      "name": "Olimpo",
+      "shortName": "Olimpo",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/2636.png"
+    },
+    {
+      "id": "platense",
+      "name": "Platense",
+      "shortName": "Platense",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7764.png"
+    },
+    {
+      "id": "racing-club",
+      "name": "Racing Club",
+      "shortName": "Racing",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/15.png"
+    },
+    {
+      "id": "real-pilar",
+      "name": "Real Pilar",
+      "shortName": "Real Pilar",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18844.png"
+    },
+    {
+      "id": "river-plate",
+      "name": "River Plate",
+      "shortName": "River",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/16.png"
+    },
+    {
+      "id": "rosario-central",
+      "name": "Rosario Central",
+      "shortName": "Central",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17.png"
+    },
+    {
+      "id": "san-lorenzo",
+      "name": "San Lorenzo",
+      "shortName": "San Lorenzo",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/18.png"
+    },
+    {
+      "id": "san-martin-sj",
+      "name": "San Martín (San Juan)",
+      "shortName": "San Martín SJ",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7845.png"
+    },
+    {
+      "id": "san-martin-tucuman",
+      "name": "San Martín (Tucumán)",
+      "shortName": "San Martín (T)",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17814.png"
+    },
+    {
+      "id": "san-martin-de-formosa",
+      "name": "San Martín de Formosa",
+      "shortName": "SM Formosa"
+    },
+    {
+      "id": "san-miguel",
+      "name": "San Miguel",
+      "shortName": "San Miguel",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10058.png"
+    },
+    {
+      "id": "sarmiento",
+      "name": "Sarmiento (Junín)",
+      "shortName": "Sarmiento",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10158.png"
+    },
+    {
+      "id": "sarmiento-de-la-banda",
+      "name": "Sarmiento de La Banda",
+      "shortName": "Sarmiento (LB)"
+    },
+    {
+      "id": "sp-belgrano",
+      "name": "Sp. Belgrano",
+      "shortName": "Sp. Belgrano",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/11991.png"
+    },
+    {
+      "id": "sportivo-atenas",
+      "name": "Sportivo Atenas",
+      "shortName": "Atenas"
+    },
+    {
+      "id": "sportivo-barracas",
+      "name": "Sportivo Barracas",
+      "shortName": "Sp. Barracas",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/17706.png"
+    },
+    {
+      "id": "talleres",
+      "name": "Talleres (Córdoba)",
+      "shortName": "Talleres",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/19.png"
+    },
+    {
+      "id": "temperley",
+      "name": "Temperley",
+      "shortName": "Temperley",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10162.png"
+    },
+    {
+      "id": "tigre",
+      "name": "Tigre",
+      "shortName": "Tigre",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/7767.png"
+    },
+    {
+      "id": "tristan-suarez",
+      "name": "Tristán Suárez",
+      "shortName": "T. Suárez",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/10163.png"
+    },
+    {
+      "id": "union",
+      "name": "Unión (Santa Fe)",
+      "shortName": "Unión",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/20.png"
+    },
+    {
+      "id": "velez-sarsfield",
+      "name": "Vélez Sarsfield",
+      "shortName": "Vélez",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/21.png"
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "copa-argentina",
+      "name": "Copa Argentina"
+    }
+  ],
+  "matches": [
+    {"id":"espn-401845536","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-01-18T22:00Z","homeId":"independiente-rivadavia","awayId":"estudiantes-buenos-aires","status":"finished","homeGoals":2,"awayGoals":0,"source":{"provider":"espn","externalId":"401845536"}},
+    {"id":"espn-401845535","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-01-19T00:15Z","homeId":"lanus","awayId":"sarmiento-de-la-banda","status":"finished","homeGoals":4,"awayGoals":1,"source":{"provider":"espn","externalId":"401845535"}},
+    {"id":"espn-401845537","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-01-20T00:15Z","homeId":"estudiantes-lp","awayId":"ituzaingo","status":"finished","homeGoals":4,"awayGoals":0,"source":{"provider":"espn","externalId":"401845537"}},
+    {"id":"espn-401845538","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-01-22T00:15Z","homeId":"argentinos-juniors","awayId":"midland","status":"finished","homeGoals":1,"awayGoals":1,"penalties":{"home":5,"away":6},"source":{"provider":"espn","externalId":"401845538"}},
+    {"id":"espn-401846919","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-02-04T22:00Z","homeId":"talleres","awayId":"argentino-de-merlo","status":"finished","homeGoals":2,"awayGoals":0,"source":{"provider":"espn","externalId":"401846919"}},
+    {"id":"espn-401846918","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-02-05T00:15Z","homeId":"platense","awayId":"argentino-monte-maiz","status":"finished","homeGoals":1,"awayGoals":0,"source":{"provider":"espn","externalId":"401846918"}},
+    {"id":"espn-401846921","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-02-05T22:00Z","homeId":"deportivo-riestra","awayId":"deportivo-maipu","status":"finished","homeGoals":1,"awayGoals":0,"source":{"provider":"espn","externalId":"401846921"}},
+    {"id":"espn-401846920","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-02-06T00:15Z","homeId":"barracas-central","awayId":"temperley","status":"finished","homeGoals":2,"awayGoals":2,"penalties":{"home":4,"away":3},"source":{"provider":"espn","externalId":"401846920"}},
+    {"id":"espn-401846923","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-02-11T22:00Z","homeId":"rosario-central","awayId":"sp-belgrano","status":"finished","homeGoals":2,"awayGoals":0,"source":{"provider":"espn","externalId":"401846923"}},
+    {"id":"espn-401846922","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-02-12T00:15Z","homeId":"central-cordoba-sde","awayId":"gimnasia-y-esgrima-jujuy","status":"finished","homeGoals":2,"awayGoals":2,"penalties":{"home":4,"away":5},"source":{"provider":"espn","externalId":"401846922"}},
+    {"id":"espn-401846924","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-02-17T20:00Z","homeId":"aldosivi","awayId":"san-miguel","status":"finished","homeGoals":3,"awayGoals":0,"source":{"provider":"espn","externalId":"401846924"}},
+    {"id":"espn-401846926","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-02-17T22:45Z","homeId":"tigre","awayId":"claypole","status":"finished","homeGoals":2,"awayGoals":0,"source":{"provider":"espn","externalId":"401846926"}},
+    {"id":"espn-401846925","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-02-18T01:00Z","homeId":"river-plate","awayId":"ciudad-de-bolivar","status":"finished","homeGoals":1,"awayGoals":0,"source":{"provider":"espn","externalId":"401846925"}},
+    {"id":"espn-401846944","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-02-25T00:15Z","homeId":"boca-juniors","awayId":"gimnasia-chivilcoy","status":"finished","homeGoals":2,"awayGoals":0,"source":{"provider":"espn","externalId":"401846944"}},
+    {"id":"espn-401846928","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-02-25T20:00Z","homeId":"san-martin-sj","awayId":"deportivo-madryn","status":"finished","homeGoals":2,"awayGoals":0,"source":{"provider":"espn","externalId":"401846928"}},
+    {"id":"espn-401846927","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-02-26T00:15Z","homeId":"godoy-cruz","awayId":"deportivo-moron","status":"finished","homeGoals":0,"awayGoals":1,"source":{"provider":"espn","externalId":"401846927"}},
+    {"id":"espn-401846929","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-03-21T00:15Z","homeId":"san-lorenzo","awayId":"deportivo-rincon","status":"finished","homeGoals":5,"awayGoals":0,"source":{"provider":"espn","externalId":"401846929"}},
+    {"id":"espn-401846930","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-03-25T22:00Z","homeId":"atletico-tucuman","awayId":"sportivo-barracas","status":"finished","homeGoals":2,"awayGoals":1,"source":{"provider":"espn","externalId":"401846930"}},
+    {"id":"espn-401846931","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-03-26T00:15Z","homeId":"banfield","awayId":"real-pilar","status":"finished","homeGoals":3,"awayGoals":0,"source":{"provider":"espn","externalId":"401846931"}},
+    {"id":"espn-401846945","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-03-27T20:00Z","homeId":"independiente","awayId":"sportivo-atenas","status":"finished","homeGoals":4,"awayGoals":2,"source":{"provider":"espn","externalId":"401846945"}},
+    {"id":"espn-401846932","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-03-28T01:15Z","homeId":"belgrano","awayId":"atletico-rafaela","status":"finished","homeGoals":3,"awayGoals":0,"source":{"provider":"espn","externalId":"401846932"}},
+    {"id":"espn-401846933","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-03-29T00:15Z","homeId":"racing-club","awayId":"san-martin-de-formosa","status":"finished","homeGoals":1,"awayGoals":0,"source":{"provider":"espn","externalId":"401846933"}},
+    {"id":"espn-401846934","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-03-29T21:00Z","homeId":"huracan","awayId":"olimpo","status":"finished","homeGoals":2,"awayGoals":1,"source":{"provider":"espn","externalId":"401846934"}},
+    {"id":"espn-401846935","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-03-29T23:15Z","homeId":"newells-old-boys","awayId":"acassuso","status":"finished","homeGoals":0,"awayGoals":2,"source":{"provider":"espn","externalId":"401846935"}},
+    {"id":"espn-401846936","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-03-31T00:15Z","homeId":"union","awayId":"agropecuario","status":"finished","homeGoals":2,"awayGoals":0,"source":{"provider":"espn","externalId":"401846936"}},
+    {"id":"espn-401846937","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-04-01T22:00Z","homeId":"defensa-y-justicia","awayId":"chaco-for-ever","status":"finished","homeGoals":2,"awayGoals":1,"source":{"provider":"espn","externalId":"401846937"}},
+    {"id":"espn-401846938","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-04-02T00:15Z","homeId":"instituto","awayId":"atlanta","status":"finished","homeGoals":2,"awayGoals":0,"source":{"provider":"espn","externalId":"401846938"}},
+    {"id":"espn-401846939","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-04-07T19:00Z","homeId":"estudiantes-rc","awayId":"san-martin-tucuman","status":"finished","homeGoals":0,"awayGoals":0,"penalties":{"home":3,"away":4},"source":{"provider":"espn","externalId":"401846939"}},
+    {"id":"espn-401846941","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-04-07T21:30Z","homeId":"velez-sarsfield","awayId":"deportivo-armenio","status":"finished","homeGoals":4,"awayGoals":1,"source":{"provider":"espn","externalId":"401846941"}},
+    {"id":"espn-401846943","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-04-09T00:10Z","homeId":"sarmiento","awayId":"tristan-suarez","status":"finished","homeGoals":1,"awayGoals":0,"source":{"provider":"espn","externalId":"401846943"}},
+    {"id":"espn-401846942","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-04-10T00:00Z","homeId":"gimnasia-lp","awayId":"camioneros","status":"finished","homeGoals":4,"awayGoals":1,"source":{"provider":"espn","externalId":"401846942"}},
+    {"id":"espn-401846940","tournamentId":"copa-argentina","phase":"round-of-64","date":"2026-04-15T17:10Z","homeId":"gimnasia-mendoza","awayId":"gimnasia-y-tiro-salta","status":"finished","homeGoals":0,"awayGoals":0,"penalties":{"home":3,"away":4},"source":{"provider":"espn","externalId":"401846940"}},
+    {"id":"espn-401867740","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-04-22T22:00Z","homeId":"acassuso","awayId":"gimnasia-lp","status":"finished","homeGoals":0,"awayGoals":3,"source":{"provider":"espn","externalId":"401867740"}},
+    {"id":"espn-401862732","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-04-23T00:15Z","homeId":"deportivo-moron","awayId":"midland","status":"finished","homeGoals":1,"awayGoals":2,"source":{"provider":"espn","externalId":"401862732"}},
+    {"id":"espn-401867738","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-05-01T00:15Z","homeId":"velez-sarsfield","awayId":"gimnasia-y-tiro-salta","status":"finished","homeGoals":2,"awayGoals":0,"source":{"provider":"espn","externalId":"401867738"}},
+    {"id":"espn-401867739","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-05-09T00:10Z","homeId":"banfield","awayId":"san-martin-tucuman","status":"finished","homeGoals":1,"awayGoals":1,"penalties":{"home":5,"away":4},"source":{"provider":"espn","externalId":"401867739"}},
+    {"id":"espn-401862733","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-05-13T19:15Z","homeId":"platense","awayId":"san-martin-sj","status":"finished","homeGoals":0,"awayGoals":0,"penalties":{"home":4,"away":3},"source":{"provider":"espn","externalId":"401862733"}},
+    {"id":"espn-401866728","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-05-20T20:00Z","homeId":"talleres","awayId":"atletico-tucuman","status":"finished","homeGoals":0,"awayGoals":3,"source":{"provider":"espn","externalId":"401866728"}},
+    {"id":"espn-401867164","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-05-22T23:00Z","homeId":"union","awayId":"independiente","status":"finished","homeGoals":0,"awayGoals":2,"source":{"provider":"espn","externalId":"401867164"}},
+    {"id":"espn-401867016","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-05-30T18:30Z","homeId":"gimnasia-y-esgrima-jujuy","awayId":"belgrano","status":"finished","homeGoals":2,"awayGoals":2,"penalties":{"home":2,"away":4},"source":{"provider":"espn","externalId":"401867016"}},
+    {"id":"espn-401867325","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-05-30T21:00Z","homeId":"instituto","awayId":"lanus","status":"finished","homeGoals":2,"awayGoals":1,"source":{"provider":"espn","externalId":"401867325"}},
+    {"id":"espn-401873936","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-05-31T18:30Z","homeId":"estudiantes-lp","awayId":"rosario-central","status":"finished","homeGoals":3,"awayGoals":0,"source":{"provider":"espn","externalId":"401873936"}},
+    {"id":"espn-401873937","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-06-03T00:10Z","homeId":"barracas-central","awayId":"huracan","status":"finished","homeGoals":1,"awayGoals":0,"source":{"provider":"espn","externalId":"401873937"}},
+    {"id":"espn-401861868","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-07-12T19:15Z","homeId":"independiente-rivadavia","awayId":"tigre","status":"finished","homeGoals":1,"awayGoals":0,"source":{"provider":"espn","externalId":"401861868"}},
+    {"id":"espn-401867324","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-07-16T21:45Z","homeId":"racing-club","awayId":"defensa-y-justicia","status":"finished","homeGoals":4,"awayGoals":1,"source":{"provider":"espn","externalId":"401867324"}},
+    {"id":"espn-401867737","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-07-17T00:45Z","homeId":"sarmiento","awayId":"boca-juniors","status":"finished","homeGoals":0,"awayGoals":2,"source":{"provider":"espn","externalId":"401867737"}},
+    {"id":"espn-401873912","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-07-17T21:45Z","homeId":"san-lorenzo","awayId":"deportivo-riestra","status":"finished","homeGoals":1,"awayGoals":1,"penalties":{"home":4,"away":5},"source":{"provider":"espn","externalId":"401873912"}},
+    {"id":"espn-401861869","tournamentId":"copa-argentina","phase":"round-of-32","date":"2026-07-18T00:45Z","homeId":"river-plate","awayId":"aldosivi","status":"finished","homeGoals":1,"awayGoals":3,"source":{"provider":"espn","externalId":"401861869"}},
+    {"id":"espn-401873660","tournamentId":"copa-argentina","phase":"round-of-16","date":"2026-08-12T22:15Z","homeId":"atletico-tucuman","awayId":"independiente","status":"finished","homeGoals":4,"awayGoals":0,"source":{"provider":"espn","externalId":"401873660"}},
+    {"id":"espn-401896916","tournamentId":"copa-argentina","phase":"round-of-16","date":"2026-08-18T20:00Z","homeId":"deportivo-riestra","awayId":"gimnasia-lp","status":"finished","homeGoals":1,"awayGoals":1,"penalties":{"home":4,"away":2},"source":{"provider":"espn","externalId":"401896916"}},
+    {"id":"espn-401872289","tournamentId":"copa-argentina","phase":"round-of-16","date":"2026-08-19T00:15Z","homeId":"banfield","awayId":"midland","status":"finished","homeGoals":2,"awayGoals":2,"penalties":{"home":4,"away":3},"source":{"provider":"espn","externalId":"401872289"}},
+    {"id":"espn-401896387","tournamentId":"copa-argentina","phase":"round-of-16","date":"2026-08-19T22:15Z","homeId":"racing-club","awayId":"belgrano","status":"finished","homeGoals":1,"awayGoals":0,"source":{"provider":"espn","externalId":"401896387"}},
+    {"id":"espn-401896915","tournamentId":"copa-argentina","phase":"round-of-16","date":"2026-08-26T22:15Z","homeId":"aldosivi","awayId":"independiente-rivadavia","status":"finished","homeGoals":0,"awayGoals":2,"source":{"provider":"espn","externalId":"401896915"}},
+    {"id":"espn-401874402","tournamentId":"copa-argentina","phase":"round-of-16","date":"2026-08-27T22:00Z","homeId":"estudiantes-lp","awayId":"barracas-central","status":"finished","homeGoals":3,"awayGoals":1,"source":{"provider":"espn","externalId":"401874402"}},
+    {"id":"espn-401874288","tournamentId":"copa-argentina","phase":"round-of-16","date":"2026-08-28T00:15Z","homeId":"platense","awayId":"instituto","status":"finished","homeGoals":1,"awayGoals":1,"penalties":{"home":3,"away":1},"source":{"provider":"espn","externalId":"401874288"}},
+    {"id":"espn-401892190","tournamentId":"copa-argentina","phase":"round-of-16","date":"2026-09-03T00:15Z","homeId":"velez-sarsfield","awayId":"boca-juniors","status":"finished","homeGoals":0,"awayGoals":0,"penalties":{"home":3,"away":4},"source":{"provider":"espn","externalId":"401892190"}},
+    {"id":"espn-401912728","tournamentId":"copa-argentina","phase":"quarterfinals","date":"2026-09-09T22:00Z","homeId":"deportivo-riestra","awayId":"banfield","status":"finished","homeGoals":1,"awayGoals":1,"penalties":{"home":6,"away":7},"source":{"provider":"espn","externalId":"401912728"}},
+    {"id":"espn-401912727","tournamentId":"copa-argentina","phase":"quarterfinals","date":"2026-09-16T22:00Z","homeId":"independiente-rivadavia","awayId":"atletico-tucuman","status":"finished","homeGoals":1,"awayGoals":1,"penalties":{"home":2,"away":3},"source":{"provider":"espn","externalId":"401912727"}},
+    {"id":"espn-401912726","tournamentId":"copa-argentina","phase":"quarterfinals","date":"2026-09-27T20:00Z","homeId":"racing-club","awayId":"boca-juniors","status":"finished","homeGoals":2,"awayGoals":3,"source":{"provider":"espn","externalId":"401912726"}},
+    {"id":"espn-401913078","tournamentId":"copa-argentina","phase":"quarterfinals","date":"2026-10-02T00:15Z","homeId":"platense","awayId":"estudiantes-lp","status":"finished","homeGoals":1,"awayGoals":0,"source":{"provider":"espn","externalId":"401913078"}},
+    {"id":"espn-401926287","tournamentId":"copa-argentina","phase":"semifinals","date":"2026-10-29T00:15Z","homeId":"atletico-tucuman","awayId":"platense","status":"scheduled","source":{"provider":"espn","externalId":"401926287"}},
+    {"id":"espn-401926286","tournamentId":"copa-argentina","phase":"semifinals","date":"2026-11-14T22:00Z","homeId":"banfield","awayId":"boca-juniors","status":"scheduled","source":{"provider":"espn","externalId":"401926286"}}
+  ]
+}

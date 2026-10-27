@@ -1,5 +1,5 @@
 // Traducción pura (sin red) de ESPN a nuestro modelo. Testeable con fixtures.
-import type { Match, MatchStatus, Phase, Team, TeamId } from '../../domain/types.ts';
+import type { CompetitionId, Match, MatchStatus, Phase, Team, TeamId } from '../../domain/types.ts';
 import { slugify, teamByEspnId } from '../teamIds.ts';
 import type { EspnEvent, EspnStandings, EspnTeam } from './types.ts';
 
@@ -9,7 +9,17 @@ export const PROVIDER_ID = 'espn';
 export const espnLeaguesForSeason = (season: number): string[] =>
   season === 2024 ? ['arg.copa_lpf', 'arg.1'] : ['arg.1'];
 
+/** Ligas de ESPN de cada copa. */
+export const ESPN_CUP_LEAGUES: Record<Exclude<CompetitionId, 'lpf'>, string> = {
+  'copa-argentina': 'arg.copa',
+  libertadores: 'conmebol.libertadores',
+  sudamericana: 'conmebol.sudamericana',
+};
+
 export const TOURNAMENT_NAMES: Record<string, string> = {
+  'copa-argentina': 'Copa Argentina',
+  libertadores: 'Copa Libertadores',
+  sudamericana: 'Copa Sudamericana',
   'copa-de-la-liga': 'Copa de la Liga',
   liga: 'Liga Profesional',
   apertura: 'Torneo Apertura',
@@ -17,6 +27,8 @@ export const TOURNAMENT_NAMES: Record<string, string> = {
 };
 
 const PHASES: Record<string, Phase> = {
+  'round-of-64': 'round-of-64',
+  'round-of-32': 'round-of-32',
   'round-of-16': 'round-of-16',
   quarterfinals: 'quarterfinals',
   semifinals: 'semifinals',
@@ -37,6 +49,17 @@ export function mapSlug(league: string, slug: string): { tournamentId: string; p
   throw new Error(`ESPN: season.slug desconocido "${slug}" (liga ${league})`);
 }
 
+/**
+ * Fases de una copa que guardamos. De la Copa Argentina, todo el cuadro; de las copas de la CONMEBOL, desde octavos
+ * (solo importan para saber si un argentino sale campeón). Devuelve undefined para las fases que se ignoran.
+ */
+export function mapCupSlug(competition: Exclude<CompetitionId, 'lpf'>, slug: string): { tournamentId: string; phase: Phase } | undefined {
+  const phase = PHASES[slug];
+  if (!phase) return undefined;
+  if (competition !== 'copa-argentina' && (phase === 'round-of-64' || phase === 'round-of-32')) return undefined;
+  return { tournamentId: competition, phase };
+}
+
 const FINISHED = new Set(['STATUS_FULL_TIME', 'STATUS_FINAL', 'STATUS_FINAL_AET', 'STATUS_FINAL_PEN']);
 
 export function mapStatus(name: string, state: 'pre' | 'in' | 'post'): MatchStatus {
@@ -54,14 +77,14 @@ export function mapTeam(t: EspnTeam): Team {
     id: known?.id ?? slugify(t.displayName),
     name: known?.name ?? t.displayName.trim(),
     shortName: known?.shortName ?? t.shortDisplayName.trim(),
-    logoUrl: t.logo,
+    logoUrl: t.logo || undefined, // algunos equipos de categorías menores vienen con logo vacío
   };
 }
 
 export const unknownTeams = (teams: EspnTeam[]) => teams.filter((t) => !teamByEspnId(t.id));
 
-export function mapEvent(league: string, e: EspnEvent): Match {
-  const { tournamentId, phase } = mapSlug(league, e.season.slug);
+export function mapEvent(league: string, e: EspnEvent, where = mapSlug(league, e.season.slug)): Match {
+  const { tournamentId, phase } = where;
   const competitors = e.competitions[0].competitors;
   const home = competitors.find((c) => c.homeAway === 'home')!;
   const away = competitors.find((c) => c.homeAway === 'away')!;

@@ -14,9 +14,14 @@ export interface PromedioRow {
   tied: boolean;
 }
 
-export interface SeasonMatches {
-  season: number;
-  matches: Match[];
+/** Partidos de una temporada, o sus puntos y partidos ya sumados (para no recalcular temporadas que no cambian). */
+export type SeasonMatches = { season: number; matches: Match[] } | { season: number; totals: SeasonTotals };
+
+export type SeasonTotals = Map<TeamId, { points: number; played: number }>;
+
+export function seasonTotals(matches: Match[], teamIds: TeamId[], counts: (m: Match) => boolean): SeasonTotals {
+  const table = tally(matches.filter(counts), teamIds);
+  return new Map([...table].map(([id, t]) => [id, { points: t.points, played: t.played }]));
 }
 
 /**
@@ -32,12 +37,13 @@ export function computePromedios(
   decimals: number,
 ): PromedioRow[] {
   const rows: PromedioRow[] = teamIds.map((teamId) => ({ teamId, bySeason: {}, points: 0, played: 0, average: 0, position: 0, tied: false }));
-  for (const { season, matches } of data) {
-    if (!seasons.includes(season)) continue;
-    const table = tally(matches.filter(counts), teamIds);
+  for (const item of data) {
+    if (!seasons.includes(item.season)) continue;
+    const season = item.season;
+    const table = 'totals' in item ? item.totals : seasonTotals(item.matches, teamIds, counts);
     for (const row of rows) {
-      const t = table.get(row.teamId)!;
-      if (t.played === 0) continue;
+      const t = table.get(row.teamId);
+      if (!t || t.played === 0) continue;
       row.bySeason[season] = { points: t.points, played: t.played };
       row.points += t.points;
       row.played += t.played;

@@ -153,27 +153,40 @@ Regla clave: **nada fuera de `adapters/` conoce el formato de ESPN.**
 - [x] Diseño responsive con modo oscuro (falta probarlo en un celular real).
 
 ### Fase 4: Simulador  ⏱ 3–4 sesiones
-- [ ] Modo manual: el usuario carga resultados de partidos pendientes y la tabla se recalcula en vivo.
-- [ ] Modelo de probabilidad por partido: empezar con **Elo** (simple) o **Poisson** con fuerza de ataque y defensa, calibrado con 2023–2025.
-- [ ] Monte Carlo en un Web Worker: N = 10.000+ simulaciones del resto del torneo → % de cada posición final por equipo.
-- [ ] Combinar ambos: resultados fijados por el usuario + el resto simulado.
+- [x] Modo manual: el usuario carga resultados de partidos pendientes y la tabla se recalcula en vivo (se guardan en `localStorage`).
+- [x] Modelo de probabilidad por partido: **Poisson** con ataque/defensa por equipo, ventaja de local y corrección de Dixon-Coles
+      (`engine/model.ts`). Calibrado con validación hacia adelante (`scripts/calibrate.ts`): log-loss 1,065 vs. 1,086 de la línea base,
+      empates predichos 30% vs. 31% reales.
+- [x] Monte Carlo en un Web Worker (`engine/simulate.ts`), por tandas: muestra un resultado con 5.000 simulaciones (~1,2 s) y lo afina
+      hasta 200.000 (~45 s, error ±0,1 puntos; el tope es por memoria). Recorrer todas las combinaciones no es posible
+      (3^31 ≈ 6×10^14 con 31 partidos; 1 fecha sola ya son 14 millones). Mientras recalcula, contenido borroso + indicador girando. → % de playoffs, campeón del torneo en curso
+      (con la llave: alargue y penales), campeón de Liga, descenso (por promedio y por anual, con partido de desempate) y posición final.
+- [x] Combinar ambos: resultados fijados por el usuario + el resto simulado.
+- [x] Los empates que irían a fair play/sorteo se ordenan al azar en cada simulación.
+- [x] Rediseño de la pestaña (pedido del usuario): 3 secciones — **¿Qué necesita mi equipo?**, **Probabilidades** (un objetivo a la vez, con barras)
+      y **Jugá los partidos** (botones local/empate/visitante con la probabilidad del modelo).
 
 ### Fase 5: Reglas, títulos y clasificación  ⏱ 3–4 sesiones
 - [x] Investigación inicial → **`docs/REGLAS-2026.md`** (7 títulos en 2026, 8 desde 2027 con la Recopa de Campeones).
 - [x] Puntos ⚠️ resueltos con los reglamentos oficiales (LPF 2026 y Copa Argentina 2026; texto en `docs/fuentes/`).
 - [x] Validar los promedios contra una tabla publicada (coinciden; ver sección 4 de `docs/REGLAS-2026.md`).
-- [ ] Simular **cada título**: Clausura (con playoffs), Campeón de Liga, Trofeo de Campeones, Copa Argentina,
-      Supercopa Argentina, Supercopa Internacional y Recopa de Campeones (triangular con puntos 3/2/1/0).
+- [x] Simular Clausura (con playoffs), Campeón de Liga y Copa Argentina (penales directos, `engine/cups.ts`).
+- [x] Finales de Libertadores y Sudamericana (dan plaza extra): 50/50, porque no hay datos para comparar con equipos de otros países.
+- [ ] Simular Trofeo de Campeones, Supercopa Argentina, Supercopa Internacional y Recopa de Campeones (triangular con puntos 3/2/1/0).
 - [ ] Modelar la cadena entre temporadas (los títulos de N definen las supercopas de N+1 y la Recopa de N+2).
 - [ ] Modelar las reglas como **configuración por temporada** en `rules/` (cambian casi todos los años).
-- [ ] Simular también los playoffs (eliminación directa, penales).
-- [ ] Mostrar "% de clasificar a Libertadores / Sudamericana / descender".
+- [x] Simular también los playoffs (eliminación directa, alargue y penales).
+- [x] Reparto de cupos a Libertadores/Sudamericana 2027 con todas las reasignaciones del art. 27–28 (`engine/qualification.ts`, con tests).
+- [x] Mostrar "% de clasificar a Libertadores / Sudamericana / descender".
+- [ ] Cuadro real de la Copa Argentina: ESPN no trae el diagrama; si falta una ronda, los ganadores se cruzan en orden de fecha.
 
 ### Fase 6: "¿Todavía puede?" (cálculo exacto)  ⏱ 2+ sesiones
+- [x] Versión por simulación (`engine/analysis.ts`): para un equipo y un objetivo, probabilidad, si depende de sí mismo,
+      cómo cambia con cada resultado de sus partidos, qué otros resultados le convienen y un camino de resultados que lo logra.
 - [ ] Responder de forma **exacta** si un equipo puede o no alcanzar un objetivo (no por probabilidad).
 - [ ] Enfoque: problema de eliminación matemática → flujo máximo (*max-flow*) para "terminar entre los primeros k";
       para reglas combinadas, programación entera (ILP) con un solver en JS (ej. `javascript-lp-solver` o HiGHS en wasm).
-- [ ] Mostrar un escenario de ejemplo ("River clasifica si pasa esto").
+- [x] Mostrar un escenario de ejemplo ("River clasifica si pasa esto"): sale de la simulación.
 
 ### Fase 7: Resultados en vivo  ⏱ 2 sesiones
 - [ ] Verificar si ESPN permite CORS desde el navegador (sirve para el prototipo; igual usamos el proxy).
@@ -184,10 +197,15 @@ Regla clave: **nada fuera de `adapters/` conoce el formato de ESPN.**
 - [ ] Tabla "en vivo" (cómo quedaría si terminara así) y simulador partiendo del resultado parcial.
 
 ### Fase 8: Automatización y deploy  ⏱ 1 sesión
-- [ ] Cuenta gratis de Cloudflare; deploy del sitio en Pages (`*.pages.dev`) y del Worker con `wrangler`.
-- [ ] Cron Trigger (ej. cada 2 h los días de partido, 1 vez por día el resto) que corre la ingesta.
-- [ ] Decidir dónde se guardan los JSON generados: R2, o commit al repo + redeploy de Pages.
-- [ ] Revisar los límites actuales del plan gratis de Cloudflare.
+**Cambio de decisión (27/10/2026):** en vez de Cloudflare, **GitHub Actions + GitHub Pages con el repo público** (gratis, sin límite de minutos).
+- [x] Workflow `.github/workflows/update.yml`, cada 5 minutos (GitHub no garantiza la puntualidad):
+      ingesta → si los datos cambiaron respecto del sitio publicado (`contentHash` en `index.json`), simulación completa
+      (`npm run precompute`: 200.000 simulaciones + análisis de los 30 equipos × 5 objetivos, ~2 min) → build → deploy a Pages.
+      Si solo cambió el minuto de un partido en juego, reutiliza la simulación publicada.
+- [x] Los datos generados **no se commitean**: van directo al sitio. `public/data/lpf/simulation.json` está en `.gitignore`.
+- [x] La página usa la simulación de la nube; solo simula en el dispositivo (hasta 50.000) si el usuario elige resultados propios.
+- [ ] Hacer el repo público y activar Pages (Settings → Pages → Source: GitHub Actions). Lo hace el dueño del repo.
+- [ ] Ojo: GitHub desactiva los workflows programados de un repo público tras 60 días sin actividad en el repo.
 - [ ] (Opcional, con costo) dominio propio.
 
 ### Fase 9: Expansión (futuro)
@@ -200,4 +218,4 @@ Regla clave: **nada fuera de `adapters/` conoce el formato de ESPN.**
 ## 5. Primer paso al volver a la PC
 
 1. `npm install`, `npm run ingest` (actualiza los datos) y `npm run dev`.
-2. Pedir: *"Seguimos con PLAN.md, fase 4"* (simulador). Antes, `npm test` para confirmar que ESPN no cambió.
+2. Pedir: *"Seguimos con PLAN.md"*: falta la fase 5 (supercopas), la 6 exacta, la 7 (en vivo) y la 8 (deploy). Antes, `npm test` para confirmar que ESPN no cambió.

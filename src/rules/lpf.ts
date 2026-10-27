@@ -16,6 +16,15 @@ export const promediosRules = (season: number): PromediosRules => ({
   decimals: 3,
 });
 
+/**
+ * Cupos a las copas de la CONMEBOL del año siguiente (art. 27–28).
+ * ⚠️ Para las copas 2028 (temporada 2027) el repechaje pasa al último que entra a copas: revisar con el reglamento 2027.
+ */
+export const qualificationRules = (season: number) => {
+  void season;
+  return { libertadoresTableSpots: 3, sudamericanaSpots: 6 };
+};
+
 /** Una posición de la fase de zonas: [zona, puesto]. */
 export type Seed = [group: string, position: number];
 

@@ -32,8 +32,9 @@ export function tally(matches: Match[], teamIds: Iterable<TeamId>): Map<TeamId, 
   for (const id of teamIds) {
     rows.set(id, { teamId: id, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0, points: 0, form: [] });
   }
-  const played = matches.filter(isPlayed).sort((a, b) => a.date.localeCompare(b.date));
-  for (const m of played) {
+  // Los partidos vienen ordenados por fecha (así los guarda la ingesta), y eso define el orden de `form`.
+  for (const m of matches) {
+    if (!isPlayed(m)) continue;
     add(rows.get(m.homeId), m.homeGoals!, m.awayGoals!);
     add(rows.get(m.awayId), m.awayGoals!, m.homeGoals!);
   }

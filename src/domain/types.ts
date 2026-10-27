@@ -1,12 +1,14 @@
 // Modelo de dominio. Nada acá conoce el formato de ningún proveedor de datos.
 
 export type TeamId = string; // id propio y estable, ej. 'river-plate'
-export type CompetitionId = 'lpf';
+export type CompetitionId = 'lpf' | 'copa-argentina' | 'libertadores' | 'sudamericana';
+
+export const CUP_COMPETITIONS = ['copa-argentina', 'libertadores', 'sudamericana'] as const satisfies CompetitionId[];
 
 export type MatchStatus = 'scheduled' | 'live' | 'finished' | 'postponed' | 'suspended' | 'cancelled';
 
 /** Fase de un torneo: la fase regular (zonas o todos contra todos) o una ronda de playoffs. */
-export type Phase = 'regular' | 'round-of-16' | 'quarterfinals' | 'semifinals' | 'final';
+export type Phase = 'regular' | 'round-of-64' | 'round-of-32' | 'round-of-16' | 'quarterfinals' | 'semifinals' | 'final';
 
 export interface Team {
   id: TeamId;

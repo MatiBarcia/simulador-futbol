@@ -4,6 +4,8 @@ import { buildLeagueView, type LeagueView } from '../engine/league.ts';
 import { truncate } from '../engine/promedios.ts';
 import { promediosRules } from '../rules/lpf.ts';
 import { Fixture } from './Fixture.tsx';
+import { Loading } from './Loading.tsx';
+import { Simulator } from './Simulator.tsx';
 import { AnnualTable, PromediosTable, ZoneTables } from './tables.tsx';
 import { useLeagueData } from './useLeagueData.ts';
 
@@ -12,6 +14,7 @@ const TABS = [
   { id: 'anual', label: 'Anual' },
   { id: 'promedios', label: 'Promedios' },
   { id: 'fixture', label: 'Fixture' },
+  { id: 'simulador', label: 'Simulador' },
 ] as const;
 type TabId = (typeof TABS)[number]['id'];
 
@@ -48,21 +51,25 @@ export function App() {
         </div>
       </header>
       <main className="main">
-        {data.status === 'loading' && <p className="status">Cargando…</p>}
+        {data.status === 'loading' && (
+          <Loading loading label="Cargando datos…">
+            <div className="loading-placeholder" />
+          </Loading>
+        )}
         {data.status === 'error' && <p className="status error">No se pudieron cargar los datos: {data.message}</p>}
-        {data.status === 'ready' && <Content tab={tab} seasons={data.seasons} current={data.current} updatedAt={data.updatedAt} />}
+        {data.status === 'ready' && <Content tab={tab} seasons={data.seasons} cups={data.cups} current={data.current} updatedAt={data.updatedAt} />}
       </main>
     </div>
   );
 }
 
-function Content({ tab, seasons, current, updatedAt }: { tab: TabId; seasons: SeasonData[]; current: number; updatedAt: string }) {
+function Content({ tab, seasons, cups, current, updatedAt }: { tab: TabId; seasons: SeasonData[]; cups: SeasonData[]; current: number; updatedAt: string }) {
   const view = useMemo(() => buildLeagueView(seasons, current), [seasons, current]);
   const teams = useMemo(() => {
     const map = new Map<TeamId, Team>();
-    for (const s of [...seasons].sort((a, b) => a.season - b.season)) for (const t of s.teams) map.set(t.id, t);
+    for (const s of [...cups, ...[...seasons].sort((a, b) => a.season - b.season)]) for (const t of s.teams) map.set(t.id, t);
     return map;
-  }, [seasons]);
+  }, [seasons, cups]);
   const season = seasons.find((s) => s.season === current)!;
   const relegated = new Set([...view.relegated.byPromedio, ...view.relegated.byAnnualTable]);
 
@@ -72,6 +79,7 @@ function Content({ tab, seasons, current, updatedAt }: { tab: TabId; seasons: Se
       {tab === 'anual' && <AnnualTable view={view} teams={teams} />}
       {tab === 'promedios' && <PromediosTab view={view} teams={teams} />}
       {tab === 'fixture' && <Fixture season={season} view={view} teams={teams} />}
+      {tab === 'simulador' && <Simulator seasons={seasons} cups={cups} current={current} teams={teams} />}
       <p className="updated">
         Datos: ESPN · actualizado {new Date(updatedAt).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })}
       </p>
