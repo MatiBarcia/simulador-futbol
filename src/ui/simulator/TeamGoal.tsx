@@ -107,16 +107,19 @@ function GoalReport({ teamId, analysis: a, option, samples, teams, name }: {
       {!decided && (
         <>
           <h4 className="goal-heading">Sus partidos</h4>
+          <p className="note">Cómo queda su chance según lo que pase en cada partido (hoy: {pct(a.probability)}).</p>
           {a.ownMatches.length === 0 && ownTitles.length === 0 && <p className="note">No le quedan partidos: depende de lo que hagan los demás.</p>}
           <ul className="effects">
             {a.ownMatches.map((m) => (
-              <OwnMatch key={m.index} effect={m} teamId={teamId} name={name} />
+              <OwnMatch key={m.index} effect={m} teamId={teamId} name={name} today={a.probability} />
             ))}
             {ownTitles.map((t) => (
               <li key={t.index} className="effect">
                 <span className="effect-context">{eventContext(t.event)}</span>
                 <span className="effect-text">Si sale campeón {championOf(t.event.competition)}</span>
-                <span className="effect-value tone-good">{pct(t.best.probability)}</span>
+                <span className="effect-value">
+                  <Change from={a.probability} to={t.best.probability} />
+                </span>
               </li>
             ))}
           </ul>
@@ -124,18 +127,18 @@ function GoalReport({ teamId, analysis: a, option, samples, teams, name }: {
           {helpers.length > 0 && (
             <>
               <h4 className="goal-heading">Le conviene que…</h4>
+              <p className="note">Cómo cambia su chance si se da cada uno de estos resultados.</p>
               <ul className="effects">
                 {helpers.map((h) => (
                   <li key={h.index} className="effect">
                     <span className="effect-context">{eventContext(h.event)}</span>
-                    <span className="effect-text">{outcomeText(h.event, h.best.value, name, samples)}</span>
-                    <span className="effect-value tone-good" title="Probabilidad si se da ese resultado">
-                      {pct(h.best.probability)}
+                    <span className="effect-text">Si {outcomeText(h.event, h.best.value, name, samples)}</span>
+                    <span className="effect-value">
+                      <Change from={a.probability} to={h.best.probability} />
                     </span>
                   </li>
                 ))}
               </ul>
-              <p className="note">El número es la chance {option.phrase} si se da ese resultado (hoy: {pct(a.probability)}).</p>
             </>
           )}
 
@@ -164,16 +167,32 @@ function GoalReport({ teamId, analysis: a, option, samples, teams, name }: {
 
 const eventDate = (x: EventEffect) => (x.event.kind === 'match' ? x.event.date : '9999');
 
-function OwnMatch({ effect, teamId, name }: { effect: EventEffect; teamId: TeamId; name: TeamName }) {
+/** "23% → 26%" con la diferencia en puntos. */
+function Change({ from, to }: { from: number; to: number }) {
+  const diff = Math.round((to - from) * 100);
+  return (
+    <span className="change">
+      <span className="change-from">{pct(from)} →</span> <strong className={diff > 0 ? 'tone-up' : diff < 0 ? 'tone-down' : ''}>{pct(to)}</strong>
+    </span>
+  );
+}
+
+/** Diferencia en puntos: "+27", "−5" o "=". */
+const delta = (to: number, from: number) => {
+  const diff = Math.round((to - from) * 100);
+  return diff === 0 ? '=' : diff > 0 ? `+${diff}` : `−${-diff}`;
+};
+
+function OwnMatch({ effect, teamId, name, today }: { effect: EventEffect; teamId: TeamId; name: TeamName; today: number }) {
   const e = effect.event;
   if (e.kind !== 'match') return null;
   const rival = e.homeId === teamId ? e.awayId : e.homeId;
   const where = e.homeId === teamId ? 'de local' : 'de visitante';
   const byResult = new Map(effect.outcomes.map((o) => [resultFor(e, o.value, teamId), o]));
   const cells: ['win' | 'draw' | 'loss', string][] = [
-    ['win', 'Gana'],
-    ['draw', 'Empata'],
-    ['loss', 'Pierde'],
+    ['win', 'Si gana'],
+    ['draw', 'Si empata'],
+    ['loss', 'Si pierde'],
   ];
   return (
     <li className="effect own">
@@ -188,7 +207,7 @@ function OwnMatch({ effect, teamId, name }: { effect: EventEffect; teamId: TeamI
             const o = byResult.get(r)!;
             return (
               <span key={r} className={`own-result result-${r}`} title={`Pasa en el ${pct(o.frequency)} de las simulaciones`}>
-                {label} <strong>{pct(o.probability)}</strong>
+                {label} → <strong>{pct(o.probability)}</strong> <small>({delta(o.probability, today)})</small>
               </span>
             );
           })}

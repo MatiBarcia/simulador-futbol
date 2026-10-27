@@ -984,6 +984,28 @@ tr.is-muted img {
   color: var(--win);
 }
 
+.change {
+  white-space: nowrap;
+}
+
+.change-from {
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.tone-up {
+  color: var(--win);
+}
+
+.tone-down {
+  color: var(--loss);
+}
+
+.own-result small {
+  color: var(--muted);
+}
+
 .effect.own {
   grid-template-columns: 1fr;
   grid-template-areas:
@@ -1084,6 +1106,34 @@ tr.is-muted img {
 }
 
 /* Jugá los partidos */
+.play-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.play-toolbar .note {
+  flex: 1 1 280px;
+}
+
+.clear-all {
+  flex: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--relegated-bar);
+  background: var(--surface);
+  color: var(--relegated-bar);
+  cursor: pointer;
+}
+
+.clear-all:hover {
+  background: var(--bad-bg);
+}
 .round-title {
   margin: 14px 0 6px;
   font-size: 12px;

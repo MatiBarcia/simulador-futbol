@@ -13,6 +13,7 @@ interface Props {
   pending: Match[];
   draft: Draft;
   onChange: (id: string, result: { home?: number; away?: number } | undefined) => void;
+  onClearAll: () => void;
   ratings: Ratings;
   teams: Map<TeamId, Team>;
   /** Tablas con los resultados elegidos. */
@@ -23,7 +24,8 @@ interface Props {
 // Resultado por defecto al tocar un botón; después se pueden cambiar los goles.
 const QUICK = { home: { home: 1, away: 0 }, draw: { home: 1, away: 1 }, away: { home: 0, away: 1 } };
 
-export function PlayMatches({ pending, draft, onChange, ratings, teams, view, tournamentId }: Props) {
+export function PlayMatches({ pending, draft, onChange, onClearAll, ratings, teams, view, tournamentId }: Props) {
+  const chosen = Object.keys(draft).length;
   const zones = tournamentId ? view.zones[tournamentId] : undefined;
   const relegated = new Set([...view.relegated.byPromedio, ...view.relegated.byAnnualTable]);
   const rounds = new Map<number, Match[]>();
@@ -31,10 +33,17 @@ export function PlayMatches({ pending, draft, onChange, ratings, teams, view, to
 
   return (
     <>
-      <p className="note">
-        Elegí quién gana cada partido (o cargá el resultado exacto) y mirá abajo cómo quedarían las zonas, la tabla anual y los promedios.
-        Los porcentajes de cada botón son la chance de cada resultado según el modelo.
-      </p>
+      <div className="play-toolbar">
+        <p className="note">
+          Elegí quién gana cada partido (o cargá el resultado exacto) y mirá abajo cómo quedarían las zonas, la tabla anual y los promedios.
+          En cada botón, la chance de ese resultado según el modelo.
+        </p>
+        {chosen > 0 && (
+          <button className="clear-all" onClick={onClearAll}>
+            {chosen === 1 ? 'Borrar el resultado' : `Borrar los ${chosen} resultados`}
+          </button>
+        )}
+      </div>
       {[...rounds].sort((a, b) => a[0] - b[0]).map(([round, matches]) => (
         <div key={round}>
           <h4 className="round-title">Fecha {round}</h4>

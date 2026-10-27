@@ -152,6 +152,7 @@ export function Simulator({ seasons, cups, current, teams }: Props) {
                 return next;
               })
             }
+            onClearAll={() => setDraft({})}
             ratings={ratings}
             teams={teams}
             view={fixedView}
