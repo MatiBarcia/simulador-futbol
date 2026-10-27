@@ -1,8 +1,9 @@
 import type { Match, Team, TeamId } from '../../domain/types.ts';
-import type { ZoneTable } from '../../engine/league.ts';
+import type { LeagueView } from '../../engine/league.ts';
 import { expectedGoals, outcomeProbabilities, scoreGrid, type Ratings } from '../../engine/model.ts';
 import { dateFormat, smallLogo } from '../format.ts';
-import { ZoneTables } from '../tables.tsx';
+import { promediosRules } from '../../rules/lpf.ts';
+import { AnnualTable, PromediosTable, ZoneTables } from '../tables.tsx';
 import { pct } from './labels.ts';
 
 /** Lo que el usuario va cargando: un partido cuenta como fijado recién cuando tiene los dos goles. */
@@ -14,22 +15,25 @@ interface Props {
   onChange: (id: string, result: { home?: number; away?: number } | undefined) => void;
   ratings: Ratings;
   teams: Map<TeamId, Team>;
-  zones: ZoneTable[] | undefined;
-  relegated: Set<TeamId>;
+  /** Tablas con los resultados elegidos. */
+  view: LeagueView;
+  tournamentId: string | undefined;
 }
 
 // Resultado por defecto al tocar un botón; después se pueden cambiar los goles.
 const QUICK = { home: { home: 1, away: 0 }, draw: { home: 1, away: 1 }, away: { home: 0, away: 1 } };
 
-export function PlayMatches({ pending, draft, onChange, ratings, teams, zones, relegated }: Props) {
+export function PlayMatches({ pending, draft, onChange, ratings, teams, view, tournamentId }: Props) {
+  const zones = tournamentId ? view.zones[tournamentId] : undefined;
+  const relegated = new Set([...view.relegated.byPromedio, ...view.relegated.byAnnualTable]);
   const rounds = new Map<number, Match[]>();
   for (const m of pending) rounds.set(m.round ?? 0, [...(rounds.get(m.round ?? 0) ?? []), m]);
 
   return (
     <>
       <p className="note">
-        Elegí quién gana cada partido (o cargá el resultado exacto). Las probabilidades y lo que necesita cada equipo se recalculan con lo que
-        elijas. Los porcentajes de cada botón son los del modelo.
+        Elegí quién gana cada partido (o cargá el resultado exacto) y mirá abajo cómo quedarían las zonas, la tabla anual y los promedios.
+        Los porcentajes de cada botón son la chance de cada resultado según el modelo.
       </p>
       {[...rounds].sort((a, b) => a[0] - b[0]).map(([round, matches]) => (
         <div key={round}>
@@ -44,9 +48,15 @@ export function PlayMatches({ pending, draft, onChange, ratings, teams, zones, r
       {zones && (
         <>
           <h4 className="goal-heading">Así quedarían las zonas</h4>
-          <ZoneTables zones={zones} teams={teams} relegated={relegated} />
+          <ZoneTables zones={zones} teams={teams} relegated={tournamentId === 'clausura' ? relegated : new Set()} />
         </>
       )}
+      <h4 className="goal-heading">Así quedaría la tabla anual</h4>
+      <AnnualTable view={view} teams={teams} />
+      <h4 className="goal-heading">Así quedarían los promedios {view.season}</h4>
+      <section className="card">
+        <PromediosTable rows={view.promedios} seasons={promediosRules(view.season).seasons} teams={teams} relegated={new Set(view.relegated.byPromedio)} />
+      </section>
     </>
   );
 }

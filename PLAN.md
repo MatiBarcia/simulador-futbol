@@ -203,7 +203,8 @@ Regla clave: **nada fuera de `adapters/` conoce el formato de ESPN.**
       (`npm run precompute`: 200.000 simulaciones + análisis de los 30 equipos × 5 objetivos, ~2 min) → build → deploy a Pages.
       Si solo cambió el minuto de un partido en juego, reutiliza la simulación publicada.
 - [x] Los datos generados **no se commitean**: van directo al sitio. `public/data/lpf/simulation.json` está en `.gitignore`.
-- [x] La página usa la simulación de la nube; solo simula en el dispositivo (hasta 50.000) si el usuario elige resultados propios.
+- [x] El dispositivo **no simula nunca**: las probabilidades son siempre las de la nube (escenario real). Los resultados que elige el
+      usuario solo cambian las tablas de "Jugá los partidos" (zonas, anual y promedios), que se calculan al instante.
 - [ ] Hacer el repo público y activar Pages (Settings → Pages → Source: GitHub Actions). Lo hace el dueño del repo.
 - [ ] Ojo: GitHub desactiva los workflows programados de un repo público tras 60 días sin actividad en el repo.
 - [ ] (Opcional, con costo) dominio propio.

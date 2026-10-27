@@ -669,23 +669,6 @@ tr.is-muted img {
   font-variant-numeric: tabular-nums;
 }
 
-.sim-progress-track {
-  flex: none;
-  width: 120px;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--surface-alt);
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-
-.sim-progress-bar {
-  display: block;
-  height: 100%;
-  background: var(--accent);
-  transition: width 0.3s;
-}
-
 .sim-tabs {
   display: flex;
   gap: 4px;

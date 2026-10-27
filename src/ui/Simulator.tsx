@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { SeasonData, Team, TeamId } from '../domain/types.ts';
-import { analyzeGoal, type Goal } from '../engine/analysis.ts';
+import type { Goal } from '../engine/analysis.ts';
 import { buildLeagueView } from '../engine/league.ts';
 import { DEFAULT_FIT, fitRatings } from '../engine/model.ts';
 import { hydrateAnalysis } from '../engine/precomputed.ts';
@@ -11,7 +11,6 @@ import { PlayMatches, type Draft } from './simulator/PlayMatches.tsx';
 import { TeamGoal, type GoalSource } from './simulator/TeamGoal.tsx';
 import { Loading } from './Loading.tsx';
 import { usePrecomputed } from './usePrecomputed.ts';
-import { DEVICE_MAX_ITERATIONS, useSimulation } from './useSimulation.ts';
 
 const SECTIONS = [
   { id: 'goal', label: '¿Qué necesita mi equipo?' },
@@ -67,23 +66,17 @@ export function Simulator({ seasons, cups, current, teams }: Props) {
     return Object.fromEntries(Object.entries(storedDraft).filter(([id]) => ids.has(id)));
   }, [storedDraft, pending]);
 
-  // Solo cuentan los partidos con los dos goles cargados. La clave estable evita re-simular por un gol a medio cargar.
+  // Solo cuentan los partidos con los dos goles cargados. La clave estable evita recalcular las tablas por un gol a medio cargar.
   const completeKey = JSON.stringify(Object.entries(draft).filter(([, r]) => r.home !== undefined && r.away !== undefined));
   const fixed = useMemo(() => Object.fromEntries(JSON.parse(completeKey) as [string, { home: number; away: number }][]) as FixedResults, [completeKey]);
   const fixedCount = Object.keys(fixed).length;
-  // Sin resultados elegidos por el usuario, se usa la simulación de la nube (si está al día con los datos).
-  // Con resultados propios, o si la de la nube está desactualizada, se simula en el dispositivo.
-  const { precomputed, checked } = usePrecomputed(seasons, cups);
-  const cloud = fixedCount === 0 ? precomputed : undefined;
-  const sim = useSimulation(seasons, cups, current, fixed, checked && !cloud);
-  const odds = cloud ? cloud.teams : sim.result?.teams;
-  const simResult = sim.result;
-  const source = useMemo<GoalSource | undefined>(() => {
-    if (cloud) return { leagueTeams: cloud.teams.map((t) => t.teamId), allTeams: cloud.allTeams, analyze: (t, g) => hydrateAnalysis(cloud, t, g) };
-    if (simResult) return { leagueTeams: simResult.samples.teams, allTeams: simResult.samples.allTeams, analyze: (t, g) => analyzeGoal(simResult.samples, t, g) };
-    return undefined;
-  }, [cloud, simResult]);
-  const loading = !checked || (!cloud && sim.loading);
+  // Las probabilidades salen siempre de la simulación de la nube: el dispositivo no simula nada.
+  // Los resultados que elige el usuario solo cambian las tablas de "Jugá los partidos".
+  const { precomputed: cloud, upToDate, checked } = usePrecomputed(seasons, cups);
+  const source = useMemo<GoalSource | undefined>(
+    () => cloud && { leagueTeams: cloud.teams.map((t) => t.teamId), allTeams: cloud.allTeams, analyze: (t, g) => hydrateAnalysis(cloud, t, g) },
+    [cloud],
+  );
 
   const ratings = useMemo(() => {
     const all = [...seasons, ...cups.filter((c) => c.competition === 'copa-argentina')].flatMap((s) => s.matches);
@@ -112,26 +105,15 @@ export function Simulator({ seasons, cups, current, teams }: Props) {
       <div className="sim-intro">
         <h3>Simulador</h3>
         <p>
-          Jugamos muchas veces lo que falta de la temporada — los {pending.length} partidos del {tournamentName.replace('Torneo ', '')}, los
-          playoffs, la Copa Argentina y las finales de la Libertadores y la Sudamericana — y contamos qué pasa en cada caso. Los porcentajes se
-          van afinando a medida que se suman simulaciones.
+          En la nube jugamos {cloud ? cloud.iterations.toLocaleString('es-AR') : '200.000'} veces lo que falta de la temporada — los{' '}
+          {pending.length} partidos del {tournamentName.replace('Torneo ', '')}, los playoffs, la Copa Argentina y las finales de la
+          Libertadores y la Sudamericana — y contamos qué pasa en cada caso. Se recalcula cuando hay resultados nuevos.
         </p>
-        {cloud ? (
+        {cloud && (
           <div className="sim-progress">
-            {cloud.iterations.toLocaleString('es-AR')} simulaciones calculadas en la nube · {timeAgo(cloud.generatedAt)}
+            Calculado {timeAgo(cloud.generatedAt)}
+            {!upToDate && ' · hay resultados más nuevos, se actualiza en unos minutos'}
           </div>
-        ) : (
-          sim.result && (
-            <div className="sim-progress" aria-live="polite">
-              <span className="sim-progress-track" aria-hidden>
-                <span className="sim-progress-bar" style={{ width: `${(sim.progress / DEVICE_MAX_ITERATIONS) * 100}%` }} />
-              </span>
-              <span>
-                {sim.progress.toLocaleString('es-AR')} de {DEVICE_MAX_ITERATIONS.toLocaleString('es-AR')} simulaciones en tu dispositivo
-                {sim.refining ? ' · afinando…' : ' · listo'}
-              </span>
-            </div>
-          )
         )}
       </div>
 
@@ -146,7 +128,8 @@ export function Simulator({ seasons, cups, current, teams }: Props) {
 
       {fixedCount > 0 && section !== 'play' && (
         <div className="banner">
-          Usando {fixedCount} resultado{fixedCount > 1 ? 's' : ''} que elegiste.{' '}
+          Estas probabilidades son las del escenario real: no tienen en cuenta los {fixedCount} resultado{fixedCount > 1 ? 's' : ''} que
+          elegiste (esos se ven en las tablas de «Jugá los partidos»).{' '}
           <button className="link-button" onClick={() => setSection('play')}>
             Ver
           </button>
@@ -157,7 +140,6 @@ export function Simulator({ seasons, cups, current, teams }: Props) {
       )}
 
       <div className="sim-body">
-        {!cloud && sim.error && <p className="status error">Error en la simulación: {sim.error}</p>}
         {section === 'play' ? (
           <PlayMatches
             pending={pending}
@@ -172,21 +154,23 @@ export function Simulator({ seasons, cups, current, teams }: Props) {
             }
             ratings={ratings}
             teams={teams}
-            zones={tournamentId ? fixedView.zones[tournamentId] : undefined}
-            relegated={tournamentId === 'clausura' ? new Set([...fixedView.relegated.byPromedio, ...fixedView.relegated.byAnnualTable]) : new Set()}
+            view={fixedView}
+            tournamentId={tournamentId}
           />
-        ) : !odds || !source ? (
-          <Loading loading label="Simulando…">
+        ) : !checked ? (
+          <Loading loading label="Cargando…">
             <div className="loading-placeholder" />
           </Loading>
+        ) : !cloud || !source ? (
+          <p className="status">Todavía no está la simulación de la nube. Se calcula en unos minutos.</p>
         ) : (
-          <Loading loading={loading} label="Recalculando…">
+          <>
             {section === 'goal' && (
               <TeamGoal source={source} teams={teams} goals={goals} teamId={teamId} goal={goal} onTeam={setTeamId} onGoal={setGoal} />
             )}
             {section === 'odds' && (
               <OddsRanking
-                odds={odds}
+                odds={cloud.teams}
                 teams={teams}
                 options={rankingOptions}
                 selected={ranking}
@@ -199,7 +183,7 @@ export function Simulator({ seasons, cups, current, teams }: Props) {
                 }}
               />
             )}
-          </Loading>
+          </>
         )}
       </div>
     </section>
