@@ -125,29 +125,32 @@ Regla clave: **nada fuera de `adapters/` conoce el formato de ESPN.**
 ## 4. Fases
 
 ### Fase 0: Setup  ⏱ ~1 sesión
-- [ ] `npm create vite@latest` (React + TS), ESLint, Prettier, Vitest.
-- [ ] Inicializar la estructura de carpetas de arriba.
-- [ ] Decidir si `simulador-futbol` tiene su propio repo git (hoy está dentro del repo de `C:\VisualStudio`). **Recomendado: repo propio.**
+- [x] `npm create vite@latest` (React + TS), oxlint (el template actual de Vite trae oxlint en vez de ESLint), Vitest.
+- [x] Inicializar la estructura de carpetas de arriba.
+- [x] Repo propio (`github.com/MatiBarcia/simulador-futbol`).
 
 ### Fase 1: Datos (adapter ESPN + ingesta)  ⏱ 2–3 sesiones
-- [ ] Definir tipos de `domain/`.
-- [ ] Guardar respuestas reales de ESPN en `tests/fixtures/` (standings, scoreboard 2026, teams).
-- [ ] Implementar `EspnProvider` (mapeo de estados, etapas, ids de equipos).
-- [ ] Tabla `teamIds.ts`: ESPN id → id propio (30 equipos actuales + los que ascendieron o descendieron en 2023–2025).
-- [ ] Tests del adapter contra los fixtures (sin red).
-- [ ] `scripts/ingest.ts`: baja 2023–2026 de LPF y escribe `data/arg.1/2026.json`, etc.
-- [ ] Validar el JSON generado con un schema (zod).
+- [x] Definir tipos de `domain/`.
+- [x] Guardar respuestas reales de ESPN en `tests/fixtures/espn/` (recortadas; se regeneran con `node scripts/save-fixtures.ts`).
+- [x] Implementar `EspnProvider` (mapeo de estados, etapas, ids de equipos).
+- [x] Tabla `teamIds.ts`: ESPN id → id propio (32 equipos de 2024–2026).
+- [x] Tests del adapter contra los fixtures (sin red).
+- [x] `npm run ingest`: baja 2024–2026 y escribe `public/data/lpf/<año>.json` + `index.json`.
+  ESPN no da el número de fecha: se infiere (`engine/rounds.ts`); perfecto en 2025–2026, aproximado en la Liga 2024.
+- [x] Validar el JSON generado con un schema (zod).
 
 ### Fase 2: Motor de tablas  ⏱ 1–2 sesiones
-- [ ] `computeStandings(matches, teams, options)`: puntos, PJ, PG, PE, PP, GF, GC, DG.
-- [ ] Criterios de desempate configurables (se completan en la fase 5).
-- [ ] Tabla por zona, tabla anual, promedios (últimas 3 temporadas).
-- [ ] **Test de validación**: nuestra tabla del Clausura 2026 = tabla de ESPN.
+- [x] `computeStandings(matches, teams, tiebreak)`: puntos, PJ, PG, PE, PP, GF, GC, DG, últimos 5.
+- [x] Desempates `zone` (art. 10, con mini-torneo recursivo) y `general` (art. 24). Falta fair play (no hay datos).
+- [x] Tabla por zona, tabla anual, promedios (últimas 3 temporadas) y **promedios del año próximo** (`engine/league.ts`).
+- [x] **Test de validación**: nuestra tabla del Clausura 2026 = tabla de ESPN, y los promedios = los publicados por La Nación.
 
 ### Fase 3: UI de consulta (estilo promiedos)  ⏱ 2–3 sesiones
-- [ ] Tabla por zonas con escudos, tabla anual, promedios.
-- [ ] Fixture por fecha, con resultados y partidos pendientes.
-- [ ] Diseño responsive, pensado primero para el celular.
+- [x] Tabla por zonas con escudos, tabla anual, promedios.
+- [x] **Promedios del año próximo** (pedido de los amigos): misma pestaña, con selector de año; muestra con qué promedio arranca cada equipo en N+1.
+- [x] Fixture por fecha, con resultados y partidos pendientes.
+- [x] Llave de playoffs (`engine/bracket.ts`): cruces reales y, si todavía no empezaron, proyectados desde la tabla de hoy.
+- [x] Diseño responsive con modo oscuro (falta probarlo en un celular real).
 
 ### Fase 4: Simulador  ⏱ 3–4 sesiones
 - [ ] Modo manual: el usuario carga resultados de partidos pendientes y la tabla se recalcula en vivo.
@@ -158,7 +161,7 @@ Regla clave: **nada fuera de `adapters/` conoce el formato de ESPN.**
 ### Fase 5: Reglas, títulos y clasificación  ⏱ 3–4 sesiones
 - [x] Investigación inicial → **`docs/REGLAS-2026.md`** (7 títulos en 2026, 8 desde 2027 con la Recopa de Campeones).
 - [x] Puntos ⚠️ resueltos con los reglamentos oficiales (LPF 2026 y Copa Argentina 2026; texto en `docs/fuentes/`).
-- [ ] Cerrar los pocos puntos que quedan abiertos (sección 12 de `docs/REGLAS-2026.md`): validar los promedios contra una tabla publicada.
+- [x] Validar los promedios contra una tabla publicada (coinciden; ver sección 4 de `docs/REGLAS-2026.md`).
 - [ ] Simular **cada título**: Clausura (con playoffs), Campeón de Liga, Trofeo de Campeones, Copa Argentina,
       Supercopa Argentina, Supercopa Internacional y Recopa de Campeones (triangular con puntos 3/2/1/0).
 - [ ] Modelar la cadena entre temporadas (los títulos de N definen las supercopas de N+1 y la Recopa de N+2).
@@ -196,5 +199,5 @@ Regla clave: **nada fuera de `adapters/` conoce el formato de ESPN.**
 
 ## 5. Primer paso al volver a la PC
 
-1. Abrir Claude Code en `C:\VisualStudio\simulador-futbol` y pedir: *"Seguimos con PLAN.md, fase 0 y 1"*.
-2. Antes de programar el adapter, volver a bajar los fixtures de ESPN (comandos de la sección 2) y revisar que el formato no haya cambiado.
+1. `npm install`, `npm run ingest` (actualiza los datos) y `npm run dev`.
+2. Pedir: *"Seguimos con PLAN.md, fase 4"* (simulador). Antes, `npm test` para confirmar que ESPN no cambió.

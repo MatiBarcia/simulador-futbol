@@ -112,8 +112,11 @@ Temporada N+1: Copa Argentina N+1 + Supercopa Argentina N+1 + Supercopa Internac
   En el promedio, "empate" significa igual promedio ⚠️ (con cuántos decimales se compara: a confirmar).
 - Los ascendidos cuentan solo sus temporadas en Primera (práctica histórica ⚠️; no encontré el texto completo del art. 93).
 - Ascienden 2 de la Primera Nacional, así que siguen siendo 30 equipos.
-- ⚠️ **Qué partidos de 2024 cuentan:** según la prensa, la fase regular de la Copa de la Liga 2024 **y** la Liga 2024.
-  Cómo validarlo: calcular el promedio con los datos de ESPN y compararlo con una tabla de promedios publicada (ESPN, promiedos, PromediosInfo).
+- ✅ **Qué partidos de 2024 cuentan:** la fase regular de la Copa de la Liga 2024 (en ESPN: `arg.copa_lpf`) **y** la Liga 2024 (`arg.1`).
+- ✅ **Se trunca a 3 decimales, no se redondea** (Newell's 100/91 = 1,0989 se publica 1.098).
+  Validado el 26/10/2026: con los datos de ESPN hasta la fecha 2 del Clausura, nuestros promedios coinciden exactamente con los
+  publicados por [La Nación](https://www.lanacion.com.ar/deportes/futbol/tabla-de-promedios-2026-asi-estan-las-posiciones-que-definen-un-descenso-en-la-fecha-2-del-clausura-nid31072026/)
+  (test en `tests/engine.test.ts`). Los recién ascendidos promedian solo lo jugado en Primera (Est. Río Cuarto: 8 pts / 18 PJ = 0.444).
 
 ---
 
@@ -231,8 +234,8 @@ El modelo de partido tiene que poder simular: resultado en los 90', alargue (si 
 
 ## 12. Lo que todavía queda abierto ⚠️
 
-1. El texto completo del **art. 93 del Estatuto de la AFA** (promedios): partidos computables de 2024 y redondeo para comparar.
-   → Validar empíricamente contra una tabla de promedios publicada.
+1. ~~Partidos computables de 2024 y redondeo de los promedios~~ → resuelto empíricamente (sección 4). Queda leer el art. 93 para el caso de
+   empate exacto en el último puesto.
 2. Si ESPN trae tarjetas por partido (para el fair play). Si no, usar sorteo en la simulación.
 3. Las fases de entrada de la CONMEBOL 2027 (pueden cambiar con el reglamento de la CONMEBOL 2027).
 4. La fecha definitiva de la Supercopa Argentina 2026 (cambió varias veces).
