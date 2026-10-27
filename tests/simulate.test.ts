@@ -63,6 +63,18 @@ describe('simulate', () => {
     expect(result.teams.find((t) => t.teamId === 'belgrano')!.libertadores).toBe(1);
     // Est. Río Cuarto no puede salvarse del último puesto en promedios.
     expect(result.teams.find((t) => t.teamId === 'estudiantes-rc')!.relegatedByPromedio).toBe(1);
+
+    // Títulos nacionales: un campeón por título y la cantidad justa de participantes en las supercopas del año que viene.
+    for (const title of ['trofeo', 'copaArgentina', 'supercopaArgentina'] as const) expect(sum(result.teams.map((t) => t[title]))).toBeCloseTo(1, 10);
+    expect(sum(result.teams.map((t) => t.superArg))).toBeCloseTo(2, 10);
+    expect(sum(result.teams.map((t) => t.superInt))).toBeCloseTo(2, 10);
+    expect(sum(result.teams.map((t) => t.recopa))).toBeCloseTo(3, 10);
+    // Belgrano (campeón del Apertura) juega el Trofeo; Rosario Central ganó la Supercopa Internacional 2026: juega la Recopa.
+    expect(result.teams.find((t) => t.teamId === 'belgrano')!.trofeo).toBeGreaterThan(0);
+    expect(result.teams.find((t) => t.teamId === 'rosario-central')!.recopa).toBe(1);
+    // Solo Estudiantes o Ind. Rivadavia pueden ganar la Supercopa Argentina 2026.
+    const supercopa = result.teams.filter((t) => t.supercopaArgentina > 0).map((t) => t.teamId).sort();
+    expect(supercopa).toEqual(['estudiantes-lp', 'independiente-rivadavia']);
   });
 
   it('es reproducible con la misma semilla', async () => {

@@ -53,11 +53,17 @@ export function TeamGoal({ source, teams, goals, teamId, goal, onTeam, onGoal }:
         </label>
         <div className="field">
           <span>Objetivo</span>
-          <div className="chips" role="radiogroup" aria-label="Objetivo">
-            {goals.map((g) => (
-              <button key={g.id} role="radio" aria-checked={g.id === goal} className="chip" onClick={() => onGoal(g.id)}>
-                {g.label}
-              </button>
+          <div className="chip-groups" role="radiogroup" aria-label="Objetivo">
+            {(['copas', 'torneo'] as const).map((group) => (
+              <div key={group} className="chips">
+                {goals
+                  .filter((g) => g.group === group)
+                  .map((g) => (
+                    <button key={g.id} role="radio" aria-checked={g.id === goal} className="chip" onClick={() => onGoal(g.id)}>
+                      {g.label}
+                    </button>
+                  ))}
+              </div>
             ))}
           </div>
         </div>

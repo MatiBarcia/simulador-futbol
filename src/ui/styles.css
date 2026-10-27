@@ -803,6 +803,33 @@ tr.is-muted img {
   margin-bottom: 12px;
 }
 
+.chip-groups {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.chip-groups .chips {
+  margin-bottom: 0;
+}
+
+.chip-group {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip-group-label {
+  flex: none;
+  width: 90px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
 .chip {
   font: inherit;
   font-size: 13px;
@@ -1247,4 +1274,191 @@ tr.is-muted img {
 .play-score input::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* Árbol de copas */
+.tree-scroll {
+  overflow-x: auto;
+  padding: 4px 12px 16px;
+}
+
+.title-tree {
+  position: relative;
+  min-width: 720px;
+  display: grid;
+  gap: 36px;
+}
+
+.tree-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* Un color por título de arriba: sus líneas y el borde superior de su tarjeta. */
+:root {
+  --edge-0: #d4a017;
+  --edge-1: #3b82f6;
+  --edge-2: #a855f7;
+  --edge-3: #16a34a;
+}
+
+.tree-lines path {
+  fill: none;
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  opacity: 0.75;
+}
+
+/* Las que llegan a un título ya jugado van enteras. */
+.tree-lines path.done {
+  stroke-dasharray: none;
+  opacity: 1;
+}
+
+.tree-lines .edge-0 { stroke: var(--edge-0); }
+.tree-lines .edge-1 { stroke: var(--edge-1); }
+.tree-lines .edge-2 { stroke: var(--edge-2); }
+.tree-lines .edge-3 { stroke: var(--edge-3); }
+
+.title-tree .title-card.edge-0 { border-top: 3px solid var(--edge-0); }
+.title-tree .title-card.edge-1 { border-top: 3px solid var(--edge-1); }
+.title-tree .title-card.edge-2 { border-top: 3px solid var(--edge-2); }
+.title-tree .title-card.edge-3 { border-top: 3px solid var(--edge-3); }
+
+.tree-level {
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+  align-items: start;
+}
+
+.title-card {
+  position: relative; /* por encima de las líneas */
+  width: 100%;
+  max-width: 260px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+}
+
+.title-card.state-decided {
+  border: 1px solid var(--playoffs-bar);
+  background: var(--playoffs);
+}
+
+.title-card.state-match,
+.title-card.state-open,
+.title-card.state-entrants {
+  border-style: solid;
+}
+
+.title-card header {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+/* Íconos de los trofeos */
+:root {
+  --trophy-gold: #d4a017;
+  --trophy-gold-dark: #9a7410;
+  --trophy-silver: #a7b0b9;
+  --trophy-silver-dark: #6b7580;
+  --trophy-celeste: #74acdf;
+}
+
+.trophy {
+  flex: none;
+  --main: var(--trophy-gold);
+  --dark: var(--trophy-gold-dark);
+}
+
+.trophy-supercopaArgentina,
+.trophy-supercopaInternacional,
+.trophy-liga {
+  --main: var(--trophy-silver);
+  --dark: var(--trophy-silver-dark);
+}
+
+.trophy .trophy-main {
+  fill: var(--main);
+}
+
+.trophy .trophy-base {
+  fill: var(--dark);
+}
+
+.trophy .trophy-line {
+  stroke: var(--dark);
+}
+
+.trophy .trophy-celeste {
+  fill: var(--trophy-celeste);
+}
+
+.trophy .trophy-shine {
+  fill: #fff7d6;
+}
+
+.trophy .trophy-letter {
+  fill: #fff7d6;
+  font: 700 9px system-ui, sans-serif;
+}
+
+.trophy.is-muted {
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
+.title-card header h4 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.title-card header p {
+  margin: 2px 0 8px;
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--muted);
+}
+
+.title-result {
+  display: grid;
+  gap: 4px;
+}
+
+.title-result small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.title-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.odds-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.odds-row strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.title-future {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
 }

@@ -13,3 +13,6 @@ export const smallLogo = (url: string) => {
   const path = /a\.espncdn\.com(\/i\/teamlogos\/.+\.png)$/.exec(url)?.[1];
   return path ? `https://a.espncdn.com/combiner/i?img=${path}&w=48&h=48` : url;
 };
+
+/** "29/10" */
+export const shortDate = new Intl.DateTimeFormat('es-AR', { day: '2-digit', month: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' });

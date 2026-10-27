@@ -7,6 +7,9 @@ import type { SimEvent, SimulationResult, TeamOdds } from './simulate.ts';
 
 export const GOALS: Goal[] = ['libertadores', 'sudamericana', 'playoffs', 'champion', 'safe'];
 
+/** Se sube cuando cambia el formato: un archivo de otra versión no se reutiliza ni se muestra. */
+export const PRECOMPUTED_VERSION = 2;
+
 type SerializedEffect = Omit<EventEffect, 'event'>;
 
 interface SerializedAnalysis extends Omit<GoalAnalysis, 'ownMatches' | 'helpers' | 'path'> {
@@ -16,7 +19,7 @@ interface SerializedAnalysis extends Omit<GoalAnalysis, 'ownMatches' | 'helpers'
 }
 
 export interface PrecomputedSimulation {
-  version: 1;
+  version: typeof PRECOMPUTED_VERSION;
   generatedAt: string;
   /** Huella de los datos con los que se simuló: si no coincide con los datos actuales, está desactualizado. */
   basedOn: string;
@@ -48,7 +51,7 @@ export function precompute(result: SimulationResult, basedOn: string): Precomput
     }
   }
   return {
-    version: 1,
+    version: PRECOMPUTED_VERSION,
     generatedAt: new Date().toISOString(),
     basedOn,
     iterations: result.iterations,

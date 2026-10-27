@@ -3,6 +3,7 @@ import type { SeasonData, Team, TeamId } from '../domain/types.ts';
 import { buildLeagueView, type LeagueView } from '../engine/league.ts';
 import { truncate } from '../engine/promedios.ts';
 import { promediosRules } from '../rules/lpf.ts';
+import { Copas } from './Copas.tsx';
 import { Fixture } from './Fixture.tsx';
 import { Loading } from './Loading.tsx';
 import { Simulator } from './Simulator.tsx';
@@ -14,6 +15,7 @@ const TABS = [
   { id: 'anual', label: 'Anual' },
   { id: 'promedios', label: 'Promedios' },
   { id: 'fixture', label: 'Fixture' },
+  { id: 'copas', label: 'Copas' },
   { id: 'simulador', label: 'Simulador' },
 ] as const;
 type TabId = (typeof TABS)[number]['id'];
@@ -79,6 +81,7 @@ function Content({ tab, seasons, cups, current, updatedAt }: { tab: TabId; seaso
       {tab === 'anual' && <AnnualTable view={view} teams={teams} />}
       {tab === 'promedios' && <PromediosTab view={view} teams={teams} />}
       {tab === 'fixture' && <Fixture season={season} view={view} teams={teams} />}
+      {tab === 'copas' && <Copas seasons={seasons} cups={cups} current={current} teams={teams} />}
       {tab === 'simulador' && <Simulator seasons={seasons} cups={cups} current={current} teams={teams} />}
       <p className="updated">
         Datos: ESPN · actualizado {new Date(updatedAt).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })}

@@ -4,7 +4,7 @@ import type { SeasonData } from './types.ts';
 const teamId = z.string().regex(/^[a-z0-9-]+$/);
 
 export const seasonDataSchema = z.object({
-  competition: z.enum(['lpf', 'copa-argentina', 'libertadores', 'sudamericana']),
+  competition: z.enum(['lpf', 'copa-argentina', 'libertadores', 'sudamericana', 'supercopa-argentina']),
   season: z.number().int(),
   provider: z.string(),
   generatedAt: z.iso.datetime(),

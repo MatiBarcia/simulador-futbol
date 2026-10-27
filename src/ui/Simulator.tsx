@@ -6,7 +6,7 @@ import { DEFAULT_FIT, fitRatings } from '../engine/model.ts';
 import { hydrateAnalysis } from '../engine/precomputed.ts';
 import { applyFixed, currentTournament, type FixedResults } from '../engine/simulate.ts';
 import { goalOptions } from './simulator/labels.ts';
-import { OddsRanking, type RankingId } from './simulator/OddsRanking.tsx';
+import { OddsRanking, type RankingId, type RankingOption } from './simulator/OddsRanking.tsx';
 import { PlayMatches, type Draft } from './simulator/PlayMatches.tsx';
 import { TeamGoal, type GoalSource } from './simulator/TeamGoal.tsx';
 import { Loading } from './Loading.tsx';
@@ -54,7 +54,9 @@ export function Simulator({ seasons, cups, current, teams }: Props) {
 
   const [section, setSection] = useState<SectionId>('goal');
   const [teamId, setTeamId] = useStored<TeamId | undefined>('simulador:equipo', undefined);
-  const [goal, setGoal] = useStored<Goal>('simulador:objetivo', 'libertadores');
+  const [storedGoal, setGoal] = useStored<Goal>('simulador:objetivo', 'libertadores');
+  // Un objetivo guardado que ya no existe (por ejemplo, de una versión anterior de la página) vuelve al de por defecto.
+  const goal = goals.some((g) => g.id === storedGoal) ? storedGoal : 'libertadores';
   const [ranking, setRanking] = useState<RankingId>('champion');
 
   const matches = season.matches;
@@ -91,13 +93,15 @@ export function Simulator({ seasons, cups, current, teams }: Props) {
 
   if (pending.length === 0) return <p className="status">La fase regular terminó: no quedan partidos para simular.</p>;
 
-  const rankingOptions: { id: RankingId; label: string }[] = [
-    { id: 'champion', label: goals.find((g) => g.id === 'champion')!.label },
-    { id: 'playoffs', label: goals.find((g) => g.id === 'playoffs')!.label },
-    { id: 'leagueChampion', label: 'Campeón de Liga' },
-    { id: 'libertadores', label: goals.find((g) => g.id === 'libertadores')!.label },
-    { id: 'sudamericana', label: goals.find((g) => g.id === 'sudamericana')!.label },
-    { id: 'relegated', label: 'Descenso' },
+  const label = (id: RankingId) => goals.find((g) => g.id === id)!.label;
+  const rankingOptions: RankingOption[] = [
+    { id: 'champion', group: `Títulos ${current}`, label: label('champion') },
+    { id: 'leagueChampion', group: `Títulos ${current}`, label: 'Campeón de Liga' },
+    { id: 'copaArgentina', group: `Títulos ${current}`, label: 'Copa Argentina' },
+    { id: 'libertadores', group: `Copas ${current + 1}`, label: 'Libertadores' },
+    { id: 'sudamericana', group: `Copas ${current + 1}`, label: 'Sudamericana' },
+    { id: 'playoffs', group: tournamentName.replace('Torneo ', ''), label: 'Playoffs' },
+    { id: 'relegated', group: tournamentName.replace('Torneo ', ''), label: 'Descenso' },
   ];
 
   return (

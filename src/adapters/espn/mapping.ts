@@ -14,12 +14,14 @@ export const ESPN_CUP_LEAGUES: Record<Exclude<CompetitionId, 'lpf'>, string> = {
   'copa-argentina': 'arg.copa',
   libertadores: 'conmebol.libertadores',
   sudamericana: 'conmebol.sudamericana',
+  'supercopa-argentina': 'arg.supercopa',
 };
 
 export const TOURNAMENT_NAMES: Record<string, string> = {
   'copa-argentina': 'Copa Argentina',
   libertadores: 'Copa Libertadores',
   sudamericana: 'Copa Sudamericana',
+  'supercopa-argentina': 'Supercopa Argentina',
   'copa-de-la-liga': 'Copa de la Liga',
   liga: 'Liga Profesional',
   apertura: 'Torneo Apertura',
@@ -51,9 +53,11 @@ export function mapSlug(league: string, slug: string): { tournamentId: string; p
 
 /**
  * Fases de una copa que guardamos. De la Copa Argentina, todo el cuadro; de las copas de la CONMEBOL, desde octavos
- * (solo importan para saber si un argentino sale campeón). Devuelve undefined para las fases que se ignoran.
+ * (solo importan para saber si un argentino sale campeón); la Supercopa Argentina es un partido único (la final).
+ * Devuelve undefined para las fases que se ignoran.
  */
 export function mapCupSlug(competition: Exclude<CompetitionId, 'lpf'>, slug: string): { tournamentId: string; phase: Phase } | undefined {
+  if (competition === 'supercopa-argentina') return /^\d{4}-argentine-supercopa$/.test(slug) ? { tournamentId: competition, phase: 'final' } : undefined;
   const phase = PHASES[slug];
   if (!phase) return undefined;
   if (competition !== 'copa-argentina' && (phase === 'round-of-64' || phase === 'round-of-32')) return undefined;

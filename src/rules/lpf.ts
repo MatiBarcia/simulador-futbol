@@ -1,5 +1,5 @@
 // Reglas de la Liga Profesional que cambian por temporada. Ver docs/REGLAS-2026.md.
-import type { Match } from '../domain/types.ts';
+import type { Match, TeamId } from '../domain/types.ts';
 
 export interface PromediosRules {
   /** Temporadas que se promedian (las últimas 3, incluida la actual). */
@@ -24,6 +24,31 @@ export const qualificationRules = (season: number) => {
   void season;
   return { libertadoresTableSpots: 3, sudamericanaSpots: 6 };
 };
+
+export type KnownTitleId = 'trofeo' | 'copaArgentina' | 'supercopaInternacional';
+
+export interface KnownTitle {
+  champion: TeamId;
+  runnerUp: TeamId;
+  score: string;
+  date: string;
+}
+
+/** Títulos ya jugados que no vienen en los datos que bajamos de ESPN (se cargan a mano), por año en que se jugaron. */
+const KNOWN_TITLES: Record<number, Partial<Record<KnownTitleId, KnownTitle>>> = {
+  2025: {
+    // Estudiantes 2-1 Platense, 20/12/2025 en San Nicolás.
+    trofeo: { champion: 'estudiantes-lp', runnerUp: 'platense', score: '2-1', date: '2025-12-20' },
+    // Ind. Rivadavia 2-2 Argentinos (5-3 por penales), 5/11/2025. En ESPN está en arg.copa 2025, que no se ingesta.
+    copaArgentina: { champion: 'independiente-rivadavia', runnerUp: 'argentinos-juniors', score: '2-2 (5-3 pen.)', date: '2025-11-05' },
+  },
+  2026: {
+    // Rosario Central 3-1 Estudiantes, 26/09/2026 (docs/REGLAS-2026.md, sección 1).
+    supercopaInternacional: { champion: 'rosario-central', runnerUp: 'estudiantes-lp', score: '3-1', date: '2026-09-26' },
+  },
+};
+
+export const knownTitle = (year: number, id: KnownTitleId): KnownTitle | undefined => KNOWN_TITLES[year]?.[id];
 
 /** Una posición de la fase de zonas: [zona, puesto]. */
 export type Seed = [group: string, position: number];

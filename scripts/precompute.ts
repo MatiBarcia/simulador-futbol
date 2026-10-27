@@ -3,7 +3,7 @@
 // Si el anterior se calculó con los mismos datos, se reutiliza y no se simula de nuevo.
 import { readFile, writeFile } from 'node:fs/promises';
 import { parseSeasonData } from '../src/domain/schema.ts';
-import { precompute, simulationInputHash, type PrecomputedSimulation } from '../src/engine/precomputed.ts';
+import { precompute, PRECOMPUTED_VERSION, simulationInputHash, type PrecomputedSimulation } from '../src/engine/precomputed.ts';
 import { createSimulation, mergeResults, type SimulationResult } from '../src/engine/simulate.ts';
 
 const ITERATIONS = 200_000;
@@ -46,7 +46,7 @@ async function loadPrevious(source: string | undefined): Promise<PrecomputedSimu
   try {
     const text = /^https?:/.test(source) ? await (await fetch(source)).text() : await readFile(source, 'utf8');
     const json = JSON.parse(text) as PrecomputedSimulation;
-    return json.version === 1 ? json : undefined;
+    return json.version === PRECOMPUTED_VERSION ? json : undefined;
   } catch {
     return undefined; // primera vez, o el sitio todavía no existe
   }

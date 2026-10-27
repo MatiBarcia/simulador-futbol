@@ -1,0 +1,29 @@
+{
+  "competition": "supercopa-argentina",
+  "season": 2026,
+  "provider": "espn",
+  "generatedAt": "2026-10-27T15:06:35.952Z",
+  "teams": [
+    {
+      "id": "estudiantes-lp",
+      "name": "Estudiantes (LP)",
+      "shortName": "Estudiantes",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/8.png"
+    },
+    {
+      "id": "independiente-rivadavia",
+      "name": "Independiente Rivadavia",
+      "shortName": "Ind. Rivadavia",
+      "logoUrl": "https://a.espncdn.com/i/teamlogos/soccer/500/9744.png"
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "supercopa-argentina",
+      "name": "Supercopa Argentina"
+    }
+  ],
+  "matches": [
+    {"id":"espn-401875813","tournamentId":"supercopa-argentina","phase":"final","date":"2026-11-12T23:00Z","homeId":"estudiantes-lp","awayId":"independiente-rivadavia","status":"scheduled","source":{"provider":"espn","externalId":"401875813"}}
+  ]
+}

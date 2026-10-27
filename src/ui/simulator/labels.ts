@@ -5,6 +5,8 @@ import { DRAW, HOME, type SimEvent, type SimulationSamples } from '../../engine/
 export interface GoalOption {
   id: Goal;
   label: string;
+  /** Para agrupar los botones: copas del año que viene, el torneo en curso y títulos. */
+  group: 'copas' | 'torneo';
   /** "de clasificar a la Libertadores 2027" — para la frase "X% de ..." */
   phrase: string;
 }
@@ -13,18 +15,20 @@ export function goalOptions(season: number, tournamentName: string): GoalOption[
   const next = season + 1;
   const torneo = tournamentName.replace('Torneo ', '');
   return [
-    { id: 'libertadores', label: `Libertadores ${next}`, phrase: `de jugar la Libertadores ${next}` },
-    { id: 'sudamericana', label: `Sudamericana ${next}`, phrase: `de jugar la Sudamericana ${next}` },
-    { id: 'playoffs', label: `Playoffs del ${torneo}`, phrase: `de entrar a los playoffs del ${torneo}` },
-    { id: 'champion', label: `Campeón del ${torneo}`, phrase: `de salir campeón del ${torneo}` },
-    { id: 'safe', label: 'No descender', phrase: 'de no descender' },
+    { id: 'libertadores', group: 'copas', label: `Libertadores ${next}`, phrase: `de jugar la Libertadores ${next}` },
+    { id: 'sudamericana', group: 'copas', label: `Sudamericana ${next}`, phrase: `de jugar la Sudamericana ${next}` },
+    { id: 'playoffs', group: 'torneo', label: `Playoffs del ${torneo}`, phrase: `de entrar a los playoffs del ${torneo}` },
+    { id: 'champion', group: 'torneo', label: `Campeón del ${torneo}`, phrase: `de salir campeón del ${torneo}` },
+    { id: 'safe', group: 'torneo', label: 'No descender', phrase: 'de no descender' },
   ];
 }
 
 const COMPETITION_NAMES: Record<string, string> = {
   apertura: 'Apertura',
   clausura: 'Clausura',
+  trofeo: 'Trofeo de Campeones',
   'copa-argentina': 'Copa Argentina',
+  'supercopa-argentina': 'Supercopa Argentina',
   libertadores: 'Libertadores',
   sudamericana: 'Sudamericana',
 };
@@ -61,7 +65,7 @@ export function outcomeText(e: SimEvent, value: number, name: TeamName, samples:
 
 /** "del Clausura", "de la Copa Argentina". */
 export const championOf = (competition: string) =>
-  ['apertura', 'clausura'].includes(competition) ? `del ${competitionName(competition)}` : `de la ${competitionName(competition)}`;
+  ['apertura', 'clausura', 'trofeo'].includes(competition) ? `del ${competitionName(competition)}` : `de la ${competitionName(competition)}`;
 
 export const pct = (p: number) => {
   if (p <= 0) return '0%';

@@ -172,9 +172,18 @@ Regla clave: **nada fuera de `adapters/` conoce el formato de ESPN.**
 - [x] Validar los promedios contra una tabla publicada (coinciden; ver sección 4 de `docs/REGLAS-2026.md`).
 - [x] Simular Clausura (con playoffs), Campeón de Liga y Copa Argentina (penales directos, `engine/cups.ts`).
 - [x] Finales de Libertadores y Sudamericana (dan plaza extra): 50/50, porque no hay datos para comparar con equipos de otros países.
-- [ ] Simular Trofeo de Campeones, Supercopa Argentina, Supercopa Internacional y Recopa de Campeones (triangular con puntos 3/2/1/0).
-- [ ] Modelar la cadena entre temporadas (los títulos de N definen las supercopas de N+1 y la Recopa de N+2).
-- [ ] Modelar las reglas como **configuración por temporada** en `rules/` (cambian casi todos los años).
+- [x] Simular el Trofeo de Campeones 2026 (con el desempate entre subcampeones si el mismo club gana Apertura y Clausura)
+      y la Supercopa Argentina 2026 (de ESPN, `arg.supercopa`).
+- [x] Quién juega en 2027 la Supercopa Argentina, la Supercopa Internacional (con reemplazo de descendidos) y la
+      Recopa de Campeones (con los subcampeones cuando se repite un club). Reglas en `engine/titles.ts`, con tests.
+      La Supercopa Internacional 2026 (ya jugada) se carga a mano en `rules/lpf.ts` (`knownTitles`).
+- [x] Pestaña **Copas**: árbol de títulos con la Recopa arriba (`engine/titleGraph.ts`), para la Recopa del año que viene y la siguiente.
+      Cada título muestra su campeón, el partido si ya tiene rivales, o la chance de cada equipo (de la simulación de la nube).
+      El Trofeo, las Supercopas y la Recopa ya no están en el Simulador: dependen de ganar otro título, así que se ven en el árbol.
+      Títulos ya jugados que ESPN no trae (Trofeo 2025, Copa Argentina 2025, Supercopa Internacional 2026): `knownTitle` en `rules/lpf.ts`.
+- [ ] Simular la Recopa misma (triangular con puntos 3/2/1/0): se juega en 2027, cuando haya fixture.
+- [x] Modelar la cadena entre temporadas para 2026 → 2027 (Trofeo, Copa Argentina y Supercopas definen las copas nacionales de 2027).
+- [x] Reglas como **configuración por temporada** en `rules/lpf.ts` (falta cargar las de 2027 cuando salga el reglamento).
 - [x] Simular también los playoffs (eliminación directa, alargue y penales).
 - [x] Reparto de cupos a Libertadores/Sudamericana 2027 con todas las reasignaciones del art. 27–28 (`engine/qualification.ts`, con tests).
 - [x] Mostrar "% de clasificar a Libertadores / Sudamericana / descender".

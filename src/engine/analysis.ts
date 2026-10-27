@@ -59,6 +59,10 @@ export function analyzeGoal(samples: SimulationSamples, teamId: TeamId, goal: Go
   }
   const probability = successes / iterations;
   const minCount = Math.max(20, iterations * MIN_SHARE);
+  // Si ya está decidido (en todas las simulaciones lo logra, o en ninguna) no hay nada que analizar.
+  if (probability === 0 || probability === 1) {
+    return { probability, status: probability === 1 ? 'done' : 'out', ownMatches: [], helpers: [], routes: routesOf(samples, goal, t) };
+  }
 
   const effects: EventEffect[] = samples.events.map((event, e) => {
     const count = new Map<number, number>();
@@ -130,14 +134,7 @@ export function analyzeGoal(samples: SimulationSamples, teamId: TeamId, goal: Go
   const withoutTitle = findPath(false);
   const path = withoutTitle && withoutTitle.probability >= 0.5 ? withoutTitle : (findPath(true) ?? withoutTitle);
 
-  const routeCounts = new Map<LibertadoresRoute, number>();
-  if (goal === 'libertadores') {
-    for (let it = 0; it < iterations; it++) {
-      const r = samples.routes[it * nTeams + t];
-      if (r) routeCounts.set(ROUTES[r - 1], (routeCounts.get(ROUTES[r - 1]) ?? 0) + 1);
-    }
-  }
-  const routes = [...routeCounts].map(([route, n]) => ({ route, probability: n / iterations })).sort((a, b) => b.probability - a.probability);
+  const routes = routesOf(samples, goal, t);
 
   const status: GoalStatus =
     probability === 1 ? 'done' : probability === 0 ? 'out' : ifWinsAll !== undefined && ifWinsAll === 1 ? 'own-hands' : 'needs-help';
@@ -150,4 +147,17 @@ export function resultFor(event: SimEvent, value: number, teamId: TeamId): 'win'
   if (value === DRAW) return 'draw';
   const homeWon = value === HOME;
   return (event.homeId === teamId) === homeWon ? 'win' : 'loss';
+}
+
+/** Para la Libertadores: por qué vía clasifica, en proporción de las simulaciones. */
+function routesOf(samples: SimulationSamples, goal: Goal, t: number): GoalAnalysis['routes'] {
+  if (goal !== 'libertadores') return [];
+  const nTeams = samples.teams.length;
+  const iterations = samples.objectives.length / nTeams;
+  const counts = new Map<LibertadoresRoute, number>();
+  for (let it = 0; it < iterations; it++) {
+    const r = samples.routes[it * nTeams + t];
+    if (r) counts.set(ROUTES[r - 1], (counts.get(ROUTES[r - 1]) ?? 0) + 1);
+  }
+  return [...counts].map(([route, n]) => ({ route, probability: n / iterations })).sort((a, b) => b.probability - a.probability);
 }

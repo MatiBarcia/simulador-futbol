@@ -4,14 +4,20 @@ import type { TeamOdds } from '../../engine/simulate.ts';
 import { TeamCell } from '../TeamCell.tsx';
 import { pct, type GoalOption } from './labels.ts';
 
-export type RankingId = Goal | 'leagueChampion' | 'relegated';
+export type RankingId = Goal | 'leagueChampion' | 'copaArgentina' | 'relegated';
+
+export interface RankingOption {
+  id: RankingId;
+  label: string;
+  group: string;
+}
 
 const value = (o: TeamOdds, id: RankingId) => (id === 'safe' ? 1 - o.relegated : o[id]);
 
 interface Props {
   odds: TeamOdds[];
   teams: Map<TeamId, Team>;
-  options: { id: RankingId; label: string }[];
+  options: RankingOption[];
   selected: RankingId;
   onSelect: (id: RankingId) => void;
   /** Al tocar un equipo: abrir "¿Qué necesita?" con ese equipo. */
@@ -29,11 +35,20 @@ export function OddsRanking({ odds, teams, options, selected, onSelect, onTeam, 
 
   return (
     <>
-      <div className="chips" role="radiogroup" aria-label="Qué ver">
-        {options.map((o) => (
-          <button key={o.id} role="radio" aria-checked={o.id === selected} className="chip" onClick={() => onSelect(o.id)}>
-            {o.label}
-          </button>
+      <div className="chip-groups" role="radiogroup" aria-label="Qué ver">
+        {[...new Set(options.map((o) => o.group))].map((group) => (
+          <div key={group} className="chip-group">
+            <span className="chip-group-label">{group}</span>
+            <div className="chips">
+              {options
+                .filter((o) => o.group === group)
+                .map((o) => (
+                  <button key={o.id} role="radio" aria-checked={o.id === selected} className="chip" onClick={() => onSelect(o.id)}>
+                    {o.label}
+                  </button>
+                ))}
+            </div>
+          </div>
         ))}
       </div>
       <ol className="ranking">

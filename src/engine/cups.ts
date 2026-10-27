@@ -9,7 +9,7 @@ const CHAMPION = KNOCKOUT_PHASES.length;
  * Hasta qué ronda llegó cada equipo (índice en KNOCKOUT_PHASES; el campeón tiene KNOCKOUT_PHASES.length).
  * Un equipo que todavía no quedó eliminado figura en la última ronda que jugó o tiene programada.
  */
-export function cupProgress(matches: Match[]): { champion?: TeamId; reached: Map<TeamId, number> } {
+export function cupProgress(matches: Match[]): { champion?: TeamId; runnerUp?: TeamId; reached: Map<TeamId, number> } {
   const reached = new Map<TeamId, number>();
   for (const m of matches) {
     const i = KNOCKOUT_PHASES.indexOf(m.phase);
@@ -17,8 +17,9 @@ export function cupProgress(matches: Match[]): { champion?: TeamId; reached: Map
   }
   const final = matches.find((m) => m.phase === 'final');
   const champion = final && matchWinner(final);
-  if (champion) reached.set(champion, CHAMPION);
-  return { champion, reached };
+  if (!final || !champion) return { reached };
+  reached.set(champion, CHAMPION);
+  return { champion, runnerUp: champion === final.homeId ? final.awayId : final.homeId, reached };
 }
 
 /**

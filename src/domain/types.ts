@@ -1,9 +1,9 @@
 // Modelo de dominio. Nada acá conoce el formato de ningún proveedor de datos.
 
 export type TeamId = string; // id propio y estable, ej. 'river-plate'
-export type CompetitionId = 'lpf' | 'copa-argentina' | 'libertadores' | 'sudamericana';
+export type CompetitionId = 'lpf' | 'copa-argentina' | 'libertadores' | 'sudamericana' | 'supercopa-argentina';
 
-export const CUP_COMPETITIONS = ['copa-argentina', 'libertadores', 'sudamericana'] as const satisfies CompetitionId[];
+export const CUP_COMPETITIONS = ['copa-argentina', 'libertadores', 'sudamericana', 'supercopa-argentina'] as const satisfies CompetitionId[];
 
 export type MatchStatus = 'scheduled' | 'live' | 'finished' | 'postponed' | 'suspended' | 'cancelled';
 

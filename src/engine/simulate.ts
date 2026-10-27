@@ -1,7 +1,7 @@
 // Monte Carlo del resto de la temporada: completa los partidos que faltan (o usa los resultados que fijó el usuario),
 // define descensos, playoffs, campeones y cupos a copas, y guarda cada escenario para poder analizarlo después.
 import type { Match, Phase, SeasonData, TeamId } from '../domain/types.ts';
-import { promediosRules, qualificationRules, seasonRules } from '../rules/lpf.ts';
+import { knownTitle, promediosRules, qualificationRules, seasonRules } from '../rules/lpf.ts';
 import { buildBracket, matchWinner } from './bracket.ts';
 import { completeCup, cupProgress } from './cups.ts';
 import type { ZoneTable } from './league.ts';
@@ -9,13 +9,14 @@ import { DEFAULT_FIT, expectedGoals, fitRatings, MAX_GOALS, scoreGrid, type Rati
 import { computePromedios, seasonTotals, truncate } from './promedios.ts';
 import { allocateCups, type LibertadoresRoute } from './qualification.ts';
 import { computeStandings, type RankedRow } from './standings.ts';
+import { recopaTeams, supercopaArgentinaTeams, supercopaInternacionalTeams, trofeoPlan, type Finalists } from './titles.ts';
 
 export type FixedResults = Record<string, { home: number; away: number }>;
 
 export interface SimulationInput {
   seasons: SeasonData[];
   season: number;
-  /** Copas de la temporada (Copa Argentina, Libertadores, Sudamericana). */
+  /** Copas de la temporada (Copa Argentina, Libertadores, Sudamericana, Supercopa Argentina). */
   cups: SeasonData[];
   /** Resultados que fija el usuario, por id de partido. */
   fixed: FixedResults;
@@ -23,8 +24,26 @@ export interface SimulationInput {
   seed?: number;
 }
 
-/** Lo que puede querer (o no querer) un equipo. Cada uno es un bit en `SimulationSamples.objectives`. */
-export const OBJECTIVES = ['playoffs', 'champion', 'leagueChampion', 'relegated', 'libertadores', 'sudamericana'] as const;
+/**
+ * Lo que puede querer (o no querer) un equipo. Cada uno es un bit en `SimulationSamples.objectives`.
+ * - Títulos de la temporada: champion (torneo en curso), leagueChampion, trofeo, copaArgentina, supercopaArgentina.
+ * - Clasificación: playoffs (del torneo en curso), libertadores y sudamericana (del año que viene),
+ *   superArg (Supercopa Argentina), superInt (Supercopa Internacional) y recopa (Recopa de Campeones) del año que viene.
+ */
+export const OBJECTIVES = [
+  'playoffs',
+  'champion',
+  'leagueChampion',
+  'relegated',
+  'libertadores',
+  'sudamericana',
+  'trofeo',
+  'copaArgentina',
+  'supercopaArgentina',
+  'superArg',
+  'superInt',
+  'recopa',
+] as const;
 export type Objective = (typeof OBJECTIVES)[number];
 export const objectiveBit = (o: Objective) => 1 << OBJECTIVES.indexOf(o);
 
@@ -49,26 +68,21 @@ export interface SimulationSamples {
   /** Todos los equipos que aparecen (incluye los de otras categorías y países, por los campeones de copas). */
   allTeams: TeamId[];
   /** objectives[sim * teams.length + t]: bits de OBJECTIVES que se cumplieron. */
-  objectives: Uint8Array;
+  objectives: Uint16Array;
   /** routes[sim * teams.length + t]: 1 + índice en ROUTES por el que clasificó a la Libertadores (0 = no clasificó). */
   routes: Uint8Array;
 }
 
-export interface TeamOdds {
+/** Probabilidades de un equipo: una por cada objetivo, más la distribución de su posición final en la zona. */
+export type TeamOdds = {
   teamId: TeamId;
   group: string;
   /** positions[i] = probabilidad de terminar (i+1)° en su zona. */
   positions: number[];
   expectedPoints: number;
-  playoffs: number;
-  champion: number; // del torneo en curso (ej. Clausura)
-  leagueChampion: number; // 1° de la tabla anual
-  relegated: number;
   relegatedByPromedio: number;
   relegatedByAnnual: number;
-  libertadores: number;
-  sudamericana: number;
-}
+} & Record<Objective, number>;
 
 export interface SimulationResult {
   iterations: number;
@@ -132,14 +146,15 @@ export function createSimulation(input: Omit<SimulationInput, 'iterations'>): { 
   const finishedRegular = seasonMatches.filter((m) => isAnnual(m) && m.status === 'finished');
   const realPlayoffs = seasonMatches.filter((m) => m.tournamentId === tournamentId && m.phase !== 'regular');
 
-  // Campeones de torneos ya terminados (ej. el Apertura cuando se juega el Clausura).
-  const finishedChampions = new Map<string, TeamId>();
+  // Finalistas de torneos ya terminados (ej. el Apertura cuando se juega el Clausura).
+  const finishedFinalists = new Map<string, Finalists>();
   for (const t of rules.zoneTournaments) {
     if (t === tournamentId) continue;
     const final = current.matches.find((m) => m.tournamentId === t && m.phase === 'final');
     const winner = final && matchWinner(final);
-    if (winner) finishedChampions.set(t, winner);
+    if (winner) finishedFinalists.set(t, { champion: winner, runnerUp: winner === final.homeId ? final.awayId : final.homeId });
   }
+  const supercopaInternacional = knownTitle(input.season, 'supercopaInternacional');
 
   const p = promediosRules(input.season);
   const q = qualificationRules(input.season);
@@ -153,14 +168,14 @@ export function createSimulation(input: Omit<SimulationInput, 'iterations'>): { 
   // Eventos que se registran en cada escenario.
   const events: SimEvent[] = [
     ...pending.map((m): SimEvent => ({ kind: 'match', id: m.id, competition: m.tournamentId, phase: m.phase, round: m.round, date: m.date, homeId: m.homeId, awayId: m.awayId })),
-    ...['copa-argentina', 'libertadores', 'sudamericana'].flatMap((c) =>
+    ...['copa-argentina', 'libertadores', 'sudamericana', 'supercopa-argentina'].flatMap((c) =>
       cup(c)
         .filter(isPending)
         .map((m): SimEvent => ({ kind: 'match', id: m.id, competition: c, phase: m.phase, date: m.date, homeId: m.homeId, awayId: m.awayId })),
     ),
   ];
   // Quién sale campeón, salvo cuando la final ya está programada (ahí el partido de la final dice lo mismo).
-  for (const c of [tournamentId, 'copa-argentina', 'libertadores', 'sudamericana']) {
+  for (const c of [tournamentId, 'trofeo', 'copa-argentina', 'libertadores', 'sudamericana', 'supercopa-argentina']) {
     if (!events.some((e) => e.kind === 'match' && e.competition === c && e.phase === 'final')) events.push({ kind: 'champion', competition: c });
   }
   const eventIndex = new Map(events.map((e, i) => [e.kind === 'match' ? e.id : `champion:${e.competition}`, i]));
@@ -173,27 +188,14 @@ export function createSimulation(input: Omit<SimulationInput, 'iterations'>): { 
       outcomes: new Uint16Array(iterations * events.length),
       teams: teamIds,
       allTeams,
-      objectives: new Uint8Array(iterations * teamIds.length),
+      objectives: new Uint16Array(iterations * teamIds.length),
       routes: new Uint8Array(iterations * teamIds.length),
     };
 
-    const counts = new Map<TeamId, Omit<TeamOdds, 'teamId'>>();
+    // Lo que no es un objetivo (posición, puntos, por qué tabla desciende). Los objetivos se cuentan al final, con los bits.
+    const counts = new Map<TeamId, { group: string; positions: number[]; expectedPoints: number; relegatedByPromedio: number; relegatedByAnnual: number }>();
     for (const [group, ids] of Object.entries(groups)) {
-      for (const id of ids) {
-        counts.set(id, {
-          group,
-          positions: ids.map(() => 0),
-          expectedPoints: 0,
-          playoffs: 0,
-          champion: 0,
-          leagueChampion: 0,
-          relegated: 0,
-          relegatedByPromedio: 0,
-          relegatedByAnnual: 0,
-          libertadores: 0,
-          sudamericana: 0,
-        });
-      }
+      for (const id of ids) counts.set(id, { group, positions: ids.map(() => 0), expectedPoints: 0, relegatedByPromedio: 0, relegatedByAnnual: 0 });
     }
 
     for (let it = 0; it < iterations; it++) {
@@ -229,7 +231,6 @@ export function createSimulation(input: Omit<SimulationInput, 'iterations'>): { 
       counts.get(byPromedio)!.relegatedByPromedio++;
       counts.get(byAnnual)!.relegatedByAnnual++;
       for (const t of relegated) objective(t, 'relegated');
-      counts.get(annual[0].teamId)!.leagueChampion++;
       objective(annual[0].teamId, 'leagueChampion');
 
       // Zonas del torneo en curso y playoffs.
@@ -245,15 +246,12 @@ export function createSimulation(input: Omit<SimulationInput, 'iterations'>): { 
           const c = counts.get(r.teamId)!;
           c.positions[i]++;
           c.expectedPoints += r.points;
-          if (zone.playoffs.has(r.teamId)) {
-            c.playoffs++;
-            objective(r.teamId, 'playoffs');
-          }
+          if (zone.playoffs.has(r.teamId)) objective(r.teamId, 'playoffs');
         });
       }
-      const champion = simulatePlayoffs(zones, realPlayoffs, sampler, rng);
+      const finalists = simulatePlayoffs(zones, realPlayoffs, sampler, rng);
+      const champion = finalists?.champion;
       if (champion) {
-        counts.get(champion)!.champion++;
         objective(champion, 'champion');
         outcome(`champion:${tournamentId}`, allTeamIndex.get(champion)!);
       }
@@ -274,6 +272,9 @@ export function createSimulation(input: Omit<SimulationInput, 'iterations'>): { 
         return progress;
       };
       const copaArgentina = playCup('copa-argentina', false, false);
+      if (copaArgentina.champion) objective(copaArgentina.champion, 'copaArgentina');
+      const supercopa = playCup('supercopa-argentina', true, false);
+      if (supercopa.champion) objective(supercopa.champion, 'supercopaArgentina');
       const conmebol = (['libertadores', 'sudamericana'] as const).flatMap((c) => {
         const champ = playCup(c, true, true).champion;
         return champ && teamIndex.has(champ) ? [{ teamId: champ, cup: c }] : [];
@@ -289,37 +290,61 @@ export function createSimulation(input: Omit<SimulationInput, 'iterations'>): { 
       const cups = allocateCups({
         annual: annualOrder,
         relegated,
-        aperturaChampion: tournamentId === 'clausura' ? finishedChampions.get('apertura') : undefined,
+        aperturaChampion: tournamentId === 'clausura' ? finishedFinalists.get('apertura')?.champion : undefined,
         clausuraChampion: tournamentId === 'clausura' ? champion : undefined,
         copaArgentinaRanking: copaRanking,
         conmebolChampions: conmebol,
         ...q,
       });
       for (const qt of cups.libertadores) {
-        counts.get(qt.teamId)!.libertadores++;
         objective(qt.teamId, 'libertadores');
         samples.routes[it * teamIds.length + teamIndex.get(qt.teamId)!] = 1 + ROUTES.indexOf(qt.route);
       }
-      for (const t of cups.sudamericana) {
-        counts.get(t)!.sudamericana++;
-        objective(t, 'sudamericana');
+      for (const t of cups.sudamericana) objective(t, 'sudamericana');
+
+      // Trofeo de Campeones (campeones del Apertura y el Clausura) y quién juega las supercopas del año que viene.
+      const apertura = finishedFinalists.get('apertura');
+      if (tournamentId === 'clausura' && apertura && finalists) {
+        const plan = trofeoPlan(apertura, finalists);
+        const rival = plan.kind === 'final' ? plan.teams[1] : matchWinner(knockout(plan.tiebreak[0], plan.tiebreak[1], true, sampler, rng))!;
+        const first = plan.kind === 'final' ? plan.teams[0] : plan.champion;
+        const trofeoWinner = matchWinner(knockout(first, rival, true, sampler, rng))!;
+        const trofeo = { champion: trofeoWinner, runnerUp: trofeoWinner === first ? rival : first };
+        objective(trofeo.champion, 'trofeo');
+        outcome('champion:trofeo', allTeamIndex.get(trofeo.champion)!);
+        if (copaArgentina.champion) for (const t of supercopaArgentinaTeams(trofeo, copaArgentina.champion)) objective(t, 'superArg');
+        for (const t of supercopaInternacionalTeams(trofeo.champion, annualOrder, relegated)) objective(t, 'superInt');
+      }
+      // Recopa de Campeones del año que viene: campeones de la Copa Argentina y de las supercopas que se juegan este año.
+      if (copaArgentina.champion && copaArgentina.runnerUp && supercopa.champion && supercopa.runnerUp && supercopaInternacional) {
+        const recopa = recopaTeams(
+          { champion: copaArgentina.champion, runnerUp: copaArgentina.runnerUp },
+          { champion: supercopa.champion, runnerUp: supercopa.runnerUp },
+          supercopaInternacional,
+        );
+        for (const t of recopa) objective(t, 'recopa');
       }
     }
 
-    const teams: TeamOdds[] = [...counts].map(([teamId, c]) => ({
-      ...c,
-      teamId,
-      positions: c.positions.map((n) => n / iterations),
-      expectedPoints: c.expectedPoints / iterations,
-      playoffs: c.playoffs / iterations,
-      champion: c.champion / iterations,
-      leagueChampion: c.leagueChampion / iterations,
-      relegated: (c.relegatedByPromedio + c.relegatedByAnnual) / iterations,
-      relegatedByPromedio: c.relegatedByPromedio / iterations,
-      relegatedByAnnual: c.relegatedByAnnual / iterations,
-      libertadores: c.libertadores / iterations,
-      sudamericana: c.sudamericana / iterations,
-    }));
+    const teams: TeamOdds[] = [...counts].map(([teamId, c]) => {
+      const t = teamIndex.get(teamId)!;
+      const byObjective = Object.fromEntries(
+        OBJECTIVES.map((o) => {
+          let n = 0;
+          for (let it = 0; it < iterations; it++) if (samples.objectives[it * teamIds.length + t] & objectiveBit(o)) n++;
+          return [o, n / iterations];
+        }),
+      ) as Record<Objective, number>;
+      return {
+        ...byObjective,
+        teamId,
+        group: c.group,
+        positions: c.positions.map((n) => n / iterations),
+        expectedPoints: c.expectedPoints / iterations,
+        relegatedByPromedio: c.relegatedByPromedio / iterations,
+        relegatedByAnnual: c.relegatedByAnnual / iterations,
+      };
+    });
     return { iterations, tournamentId, simulatedMatches: pending.length, teams, samples };
   };
   return { run };
@@ -331,18 +356,14 @@ export function mergeResults(a: SimulationResult, b: SimulationResult): Simulati
   const avg = (x: number, y: number) => (x * a.iterations + y * b.iterations) / n;
   const teams = a.teams.map((ta) => {
     const tb = b.teams.find((t) => t.teamId === ta.teamId)!;
+    const byObjective = Object.fromEntries(OBJECTIVES.map((o) => [o, avg(ta[o], tb[o])])) as Record<Objective, number>;
     return {
       ...ta,
+      ...byObjective,
       positions: ta.positions.map((p, i) => avg(p, tb.positions[i])),
       expectedPoints: avg(ta.expectedPoints, tb.expectedPoints),
-      playoffs: avg(ta.playoffs, tb.playoffs),
-      champion: avg(ta.champion, tb.champion),
-      leagueChampion: avg(ta.leagueChampion, tb.leagueChampion),
-      relegated: avg(ta.relegated, tb.relegated),
       relegatedByPromedio: avg(ta.relegatedByPromedio, tb.relegatedByPromedio),
       relegatedByAnnual: avg(ta.relegatedByAnnual, tb.relegatedByAnnual),
-      libertadores: avg(ta.libertadores, tb.libertadores),
-      sudamericana: avg(ta.sudamericana, tb.sudamericana),
     };
   });
   const concat = <T extends Uint8Array | Uint16Array>(x: T, y: T): T => {
@@ -365,7 +386,7 @@ export function mergeResults(a: SimulationResult, b: SimulationResult): Simulati
 }
 
 /** Juega lo que falta de la llave. Los partidos reales mandan; el resto se simula de a uno. */
-function simulatePlayoffs(zones: ZoneTable[], real: Match[], sampler: ScoreSampler, rng: () => number): TeamId | undefined {
+function simulatePlayoffs(zones: ZoneTable[], real: Match[], sampler: ScoreSampler, rng: () => number): Finalists | undefined {
   const rank = new Map<TeamId, RankedRow>();
   for (const z of zones) for (const r of z.rows) rank.set(r.teamId, r);
   // Mejor ubicado = mejor posición en su zona; si es la misma, puntos, diferencia y goles (art. 11).
@@ -379,7 +400,7 @@ function simulatePlayoffs(zones: ZoneTable[], real: Match[], sampler: ScoreSampl
   for (;;) {
     const rounds = buildBracket(zones, played);
     const final = rounds.at(-1)!.slots[0];
-    if (final.winner) return final.winner;
+    if (final.winner) return { champion: final.winner, runnerUp: final.teams[0] === final.winner ? final.teams[1]! : final.teams[0]! };
     const round = rounds.find((r) => r.slots.some((s) => !s.winner && s.teams[0] && s.teams[1]));
     const slot = round?.slots.find((s) => !s.winner && s.teams[0] && s.teams[1]);
     if (!round || !slot) return undefined;

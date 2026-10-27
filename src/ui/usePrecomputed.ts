@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { SeasonData } from '../domain/types.ts';
-import { simulationInputHash, type PrecomputedSimulation } from '../engine/precomputed.ts';
+import { PRECOMPUTED_VERSION, simulationInputHash, type PrecomputedSimulation } from '../engine/precomputed.ts';
 
 /**
  * La simulación calculada en la nube (data/lpf/simulation.json). `upToDate` es false si se calculó con datos
@@ -14,7 +14,7 @@ export function usePrecomputed(seasons: SeasonData[], cups: SeasonData[]): { pre
       .then((res) => (res.ok ? (res.json() as Promise<PrecomputedSimulation>) : undefined))
       .catch(() => undefined)
       .then((data) => {
-        if (!cancelled) setLoaded({ data: data?.version === 1 ? data : undefined, checked: true });
+        if (!cancelled) setLoaded({ data: data?.version === PRECOMPUTED_VERSION ? data : undefined, checked: true });
       });
     return () => {
       cancelled = true;
