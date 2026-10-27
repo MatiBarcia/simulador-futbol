@@ -33,7 +33,8 @@ beforeAll(async () => {
   cups = await loadCups();
 });
 
-describe('¿todavía puede? (exacto)', () => {
+// Resuelve cientos de modelos con el solver: en GitHub Actions tarda bastante más que en una PC.
+describe('¿todavía puede? (exacto)', { timeout: 60_000 }, () => {
   it('no contradice a la simulación', () => {
     const exact = createExactAnalysis({ seasons, cups, season: 2026 }, solve);
     const sim = simulate({ seasons, cups, season: 2026, fixed: {}, iterations: 2000, seed: 3 });
