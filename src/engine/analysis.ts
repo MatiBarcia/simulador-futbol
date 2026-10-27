@@ -1,5 +1,6 @@
 // "¿Qué necesita mi equipo?": a partir de los escenarios simulados, qué resultados le convienen a un equipo para un objetivo.
 import type { TeamId } from '../domain/types.ts';
+import type { ExactAnswer } from './exact.ts';
 import type { LibertadoresRoute } from './qualification.ts';
 import { AWAY, DRAW, HOME, objectiveBit, ROUTES, type Objective, type SimEvent, type SimulationSamples } from './simulate.ts';
 
@@ -40,6 +41,65 @@ export interface GoalAnalysis {
   path?: { steps: { effect: EventEffect; value: number }[]; probability: number };
   /** Para la Libertadores: por qué vía clasifica, en proporción de las simulaciones. */
   routes: { route: LibertadoresRoute; probability: number }[];
+  /** Para elegir resultados de sus propios partidos y ver cómo cambia la chance (sin volver a simular). */
+  scenarios?: Scenarios;
+  /** Si todavía puede / si ya lo tiene asegurado, calculado de forma exacta (no por simulación). Se agrega en la nube. */
+  exact?: ExactAnswer;
+}
+
+/**
+ * Títulos que no cambian ninguno de los objetivos: el Trofeo de Campeones y la Supercopa Argentina no dan cupos ni definen
+ * playoffs o descensos. Se juegan con los que ganaron otra cosa, así que su resultado está correlacionado con el objetivo
+ * (ej. ganar el Trofeo casi siempre es porque ganó el Clausura), pero no lo causa: mostrarlos como "si gana X" confunde.
+ */
+const NOT_CAUSES = new Set(['trofeo', 'supercopa-argentina']);
+
+/**
+ * Las simulaciones agrupadas por cómo salieron los partidos de un equipo: para cada combinación de resultados, en cuántas
+ * lo logró y cuántas hubo. Con eso la página calcula la chance con los resultados que elige el usuario.
+ */
+export interface Scenarios {
+  /** Índices de los eventos (sus partidos), en el orden de las claves. */
+  events: number[];
+  /** "0,2" (HOME en el primero, AWAY en el segundo) → [simulaciones en que lo logra, simulaciones con esos resultados]. */
+  counts: Record<string, [ok: number, total: number]>;
+}
+
+/** Con más partidos, las combinaciones se vuelven demasiadas y quedan pocas simulaciones en cada una. */
+const MAX_SCENARIO_EVENTS = 5;
+
+function scenarioCounts(samples: SimulationSamples, events: number[], ok: Uint8Array): Scenarios {
+  const nEvents = samples.events.length;
+  // Clave numérica en base 4 (los resultados de un partido son 0, 1 o 2): mucho más rápido que armar strings.
+  const byKey = new Map<number, [number, number]>();
+  for (let it = 0; it < ok.length; it++) {
+    let key = 0;
+    for (const e of events) key = key * 4 + samples.outcomes[it * nEvents + e];
+    let c = byKey.get(key);
+    if (!c) byKey.set(key, (c = [0, 0]));
+    c[0] += ok[it];
+    c[1]++;
+  }
+  const counts: Scenarios['counts'] = {};
+  for (const [key, c] of byKey) {
+    const values = events.map((_, i) => Math.floor(key / 4 ** (events.length - 1 - i)) % 4);
+    counts[values.join(',')] = c;
+  }
+  return { events, counts };
+}
+
+/** Chance con algunos de sus partidos fijados (índice de evento → resultado); los demás, como salieron en las simulaciones. */
+export function conditionalProbability(s: Scenarios, chosen: ReadonlyMap<number, number>): { probability: number; simulations: number } {
+  let ok = 0;
+  let total = 0;
+  for (const [key, [k, n]] of Object.entries(s.counts)) {
+    const values = key.split(',').map(Number);
+    if (s.events.every((e, i) => !chosen.has(e) || chosen.get(e) === values[i])) {
+      ok += k;
+      total += n;
+    }
+  }
+  return { probability: total ? ok / total : 0, simulations: total };
 }
 
 const MIN_SHARE = 0.01; // un resultado con menos del 1% de los casos no alcanza para sacar conclusiones
@@ -64,7 +124,8 @@ export function analyzeGoal(samples: SimulationSamples, teamId: TeamId, goal: Go
     return { probability, status: probability === 1 ? 'done' : 'out', ownMatches: [], helpers: [], routes: routesOf(samples, goal, t) };
   }
 
-  const effects: EventEffect[] = samples.events.map((event, e) => {
+  const effects: EventEffect[] = samples.events.flatMap((event, e) => {
+    if (NOT_CAUSES.has(event.competition)) return [];
     const count = new Map<number, number>();
     const good = new Map<number, number>();
     for (let it = 0; it < iterations; it++) {
@@ -80,6 +141,11 @@ export function analyzeGoal(samples: SimulationSamples, teamId: TeamId, goal: Go
 
   const involves = (e: SimEvent) => e.kind === 'match' && (e.homeId === teamId || e.awayId === teamId);
   const ownMatches = effects.filter((x) => involves(x.event));
+  const scenarios = scenarioCounts(
+    samples,
+    ownMatches.slice(0, MAX_SCENARIO_EVENTS).map((x) => x.index),
+    ok,
+  );
   const helpers = effects
     .filter((x) => !involves(x.event) && x.influence >= 0.02)
     .sort((a, b) => b.influence - a.influence);
@@ -138,7 +204,7 @@ export function analyzeGoal(samples: SimulationSamples, teamId: TeamId, goal: Go
 
   const status: GoalStatus =
     probability === 1 ? 'done' : probability === 0 ? 'out' : ifWinsAll !== undefined && ifWinsAll === 1 ? 'own-hands' : 'needs-help';
-  return { probability, status, ifWinsAll, ownMatches, helpers, path, routes };
+  return { probability, status, ifWinsAll, ownMatches, helpers, path, routes, scenarios };
 }
 
 /** Resultado de un partido visto desde un equipo: 'win' | 'draw' | 'loss'. */

@@ -1056,6 +1056,51 @@ tr.is-muted img {
   border: 1px solid var(--border);
 }
 
+button.own-result {
+  font: inherit;
+  font-size: 13px;
+  color: inherit;
+  cursor: pointer;
+}
+
+button.own-result:hover {
+  border-color: var(--accent);
+}
+
+/* Resultado fijado por el usuario: relleno con el color del resultado; los otros de ese partido, apagados. */
+button.own-result[aria-pressed='true'] {
+  background: var(--muted);
+  border-color: var(--muted);
+  color: #fff;
+}
+
+button.own-result.result-win[aria-pressed='true'] {
+  background: var(--win);
+  border-color: var(--win);
+}
+
+button.own-result.result-loss[aria-pressed='true'] {
+  background: var(--loss);
+  border-color: var(--loss);
+}
+
+button.own-result[aria-pressed='true'] small {
+  color: inherit;
+}
+
+button.own-result[aria-pressed='true']::before {
+  content: '✓ ';
+}
+
+.own-results:has([aria-pressed='true']) button.own-result:not([aria-pressed='true']) {
+  opacity: 0.55;
+}
+
+.goal-choice {
+  font-size: 13px;
+  color: var(--muted);
+}
+
 .own-result strong {
   font-variant-numeric: tabular-nums;
 }
@@ -1130,6 +1175,57 @@ tr.is-muted img {
   text-align: right;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+}
+
+.ranking-row.with-mark {
+  grid-template-columns: minmax(110px, 160px) 1fr 48px 26px;
+}
+
+.clinched {
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+.clinched-ties {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Copa asegurada: ✓ lleno = ya clasificado a esta copa; ✓ con borde = Libertadores o Sudamericana. */
+.clinched-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.clinched-mark.mark-in {
+  background: var(--accent);
+  color: #fff;
+}
+
+.clinched-mark.mark-cup {
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+}
+
+.mark-legend {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.mark-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* Jugá los partidos */

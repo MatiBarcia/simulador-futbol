@@ -3,8 +3,10 @@
 // Si el anterior se calculó con los mismos datos, se reutiliza y no se simula de nuevo.
 import { readFile, writeFile } from 'node:fs/promises';
 import { parseSeasonData } from '../src/domain/schema.ts';
+import { createExactAnalysis, EXACT_GOALS, type ExactGoal } from '../src/engine/exact.ts';
 import { precompute, PRECOMPUTED_VERSION, simulationInputHash, type PrecomputedSimulation } from '../src/engine/precomputed.ts';
 import { createSimulation, mergeResults, type SimulationResult } from '../src/engine/simulate.ts';
+import { createSolver } from './solver.ts';
 
 const ITERATIONS = 200_000;
 const BATCH = 10_000;
@@ -34,7 +36,13 @@ while ((result?.iterations ?? 0) < ITERATIONS) {
   result = result ? mergeResults(result, batch) : batch;
 }
 const simulated = performance.now();
-const output = precompute(result!, basedOn);
+// "¿Todavía puede?" exacto, con el solver HiGHS (solo en la nube: no se incluye en el sitio).
+const exact = createExactAnalysis({ seasons, cups, season: index.current }, await createSolver());
+const isExact = (g: string): g is ExactGoal => (EXACT_GOALS as string[]).includes(g);
+const output = precompute(result!, basedOn, {
+  answer: (teamId, goal) => (isExact(goal) ? exact.answer(teamId, goal) : undefined),
+  clinched: exact.clinched(),
+});
 await writeFile(OUT, JSON.stringify(output));
 console.log(
   `${result!.iterations.toLocaleString('es-AR')} simulaciones en ${((simulated - start) / 1000).toFixed(1)} s, ` +

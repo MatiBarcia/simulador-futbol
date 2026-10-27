@@ -3,12 +3,13 @@
 import type { Match, SeasonData, TeamId } from '../domain/types.ts';
 import { fnv1a } from './hash.ts';
 import { analyzeGoal, type EventEffect, type Goal, type GoalAnalysis } from './analysis.ts';
+import type { Clinched, ExactAnswer } from './exact.ts';
 import type { SimEvent, SimulationResult, TeamOdds } from './simulate.ts';
 
 export const GOALS: Goal[] = ['libertadores', 'sudamericana', 'playoffs', 'champion', 'safe'];
 
 /** Se sube cuando cambia el formato: un archivo de otra versión no se reutiliza ni se muestra. */
-export const PRECOMPUTED_VERSION = 2;
+export const PRECOMPUTED_VERSION = 3;
 
 type SerializedEffect = Omit<EventEffect, 'event'>;
 
@@ -30,12 +31,20 @@ export interface PrecomputedSimulation {
   events: SimEvent[];
   allTeams: TeamId[];
   analyses: Record<TeamId, Partial<Record<Goal, SerializedAnalysis>>>;
+  /** Equipos que ya tienen asegurada una copa del año que viene (engine/exact.ts). */
+  clinched: Clinched[];
 }
 
 /** Cuántos "le conviene que…" se guardan por equipo y objetivo (la página muestra 6). */
 const MAX_HELPERS = 8;
 
-export function precompute(result: SimulationResult, basedOn: string): PrecomputedSimulation {
+/** Lo calculado de forma exacta (engine/exact.ts): la respuesta por equipo y objetivo, y quién ya tiene copa asegurada. */
+export interface ExactResults {
+  answer: (teamId: TeamId, goal: Goal) => ExactAnswer | undefined;
+  clinched: Clinched[];
+}
+
+export function precompute(result: SimulationResult, basedOn: string, exact?: ExactResults): PrecomputedSimulation {
   const analyses: PrecomputedSimulation['analyses'] = {};
   for (const teamId of result.samples.teams) {
     analyses[teamId] = {};
@@ -44,6 +53,7 @@ export function precompute(result: SimulationResult, basedOn: string): Precomput
       const strip = ({ event: _event, ...rest }: EventEffect): SerializedEffect => rest;
       analyses[teamId][goal] = {
         ...a,
+        exact: exact?.answer(teamId, goal),
         ownMatches: a.ownMatches.map(strip),
         helpers: a.helpers.slice(0, MAX_HELPERS).map(strip),
         path: a.path && { probability: a.path.probability, steps: a.path.steps.map((s) => ({ index: s.effect.index, value: s.value })) },
@@ -61,6 +71,7 @@ export function precompute(result: SimulationResult, basedOn: string): Precomput
     events: result.samples.events,
     allTeams: result.samples.allTeams,
     analyses,
+    clinched: exact?.clinched ?? [],
   };
 }
 

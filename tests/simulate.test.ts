@@ -4,7 +4,7 @@ import { buildLeagueView } from '../src/engine/league.ts';
 import { expectedGoals, fitRatings, outcomeProbabilities, scoreGrid } from '../src/engine/model.ts';
 import { applyFixed, simulate, type FixedResults } from '../src/engine/simulate.ts';
 import { inferRounds } from '../src/engine/rounds.ts';
-import { analyzeGoal, resultFor } from '../src/engine/analysis.ts';
+import { analyzeGoal, conditionalProbability, resultFor } from '../src/engine/analysis.ts';
 import { hydrateAnalysis, precompute, simulationInputHash, type PrecomputedSimulation } from '../src/engine/precomputed.ts';
 import { fixtureProvider } from './helpers.ts';
 
@@ -124,6 +124,20 @@ describe('analyzeGoal', () => {
     // Las vías suman la probabilidad total.
     expect(sum(analysis.routes.map((r) => r.probability))).toBeCloseTo(analysis.probability, 10);
     if (analysis.probability > 0) expect(analysis.path).toBeDefined();
+    // El Trofeo y la Supercopa Argentina no dan cupos: no aparecen como algo que lo ayude (River puede ganar el Trofeo
+    // sin ganar el Clausura, como subcampeón del Apertura, y eso daba un "si gana el Trofeo → 86%" sin sentido).
+    const competitions = [...analysis.ownMatches, ...analysis.helpers, ...(analysis.path?.steps.map((s) => s.effect) ?? [])].map((x) => x.event.competition);
+    expect(competitions).not.toContain('trofeo');
+    expect(competitions).not.toContain('supercopa-argentina');
+
+    // Elegir resultados de sus partidos: sin elegir nada da la chance de hoy; fijar uno da lo mismo que su efecto.
+    const scenarios = analysis.scenarios!;
+    expect(scenarios.events).toEqual(analysis.ownMatches.map((m) => m.index).slice(0, scenarios.events.length));
+    expect(conditionalProbability(scenarios, new Map()).probability).toBeCloseTo(analysis.probability, 10);
+    const first = analysis.ownMatches[0];
+    for (const o of first.outcomes) {
+      expect(conditionalProbability(scenarios, new Map([[first.index, o.value]])).probability).toBeCloseTo(o.probability, 10);
+    }
 
     expect(analyzeGoal(result.samples, 'belgrano', 'libertadores').status).toBe('done');
     expect(analyzeGoal(result.samples, 'estudiantes-rc', 'safe').status).toBe('out');

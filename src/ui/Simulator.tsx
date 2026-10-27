@@ -76,7 +76,13 @@ export function Simulator({ seasons, cups, current, teams }: Props) {
   // Los resultados que elige el usuario solo cambian las tablas de "Jugá los partidos".
   const { precomputed: cloud, upToDate, checked } = usePrecomputed(seasons, cups);
   const source = useMemo<GoalSource | undefined>(
-    () => cloud && { leagueTeams: cloud.teams.map((t) => t.teamId), allTeams: cloud.allTeams, analyze: (t, g) => hydrateAnalysis(cloud, t, g) },
+    () =>
+      cloud && {
+        leagueTeams: cloud.teams.map((t) => t.teamId),
+        allTeams: cloud.allTeams,
+        analyze: (t, g) => hydrateAnalysis(cloud, t, g),
+        clinched: cloud.clinched,
+      },
     [cloud],
   );
 
@@ -181,6 +187,7 @@ export function Simulator({ seasons, cups, current, teams }: Props) {
                 selected={ranking}
                 onSelect={setRanking}
                 goals={goals}
+                clinched={cloud.clinched}
                 onTeam={(id, g) => {
                   setTeamId(id);
                   if (g) setGoal(g);

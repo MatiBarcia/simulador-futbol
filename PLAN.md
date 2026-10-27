@@ -192,9 +192,22 @@ Regla clave: **nada fuera de `adapters/` conoce el formato de ESPN.**
 ### Fase 6: "¿Todavía puede?" (cálculo exacto)  ⏱ 2+ sesiones
 - [x] Versión por simulación (`engine/analysis.ts`): para un equipo y un objetivo, probabilidad, si depende de sí mismo,
       cómo cambia con cada resultado de sus partidos, qué otros resultados le convienen y un camino de resultados que lo logra.
-- [ ] Responder de forma **exacta** si un equipo puede o no alcanzar un objetivo (no por probabilidad).
-- [ ] Enfoque: problema de eliminación matemática → flujo máximo (*max-flow*) para "terminar entre los primeros k";
-      para reglas combinadas, programación entera (ILP) con un solver en JS (ej. `javascript-lp-solver` o HiGHS en wasm).
+- [x] Respuesta **exacta** (`engine/exact.ts`): programación entera (cada partido pendiente = local / empate / visitante) resuelta
+      con HiGHS en wasm (`scripts/solver.ts`, solo en la nube; ~190 modelos en ~3 s). Para **playoffs**, **campeón** (= puede entrar
+      a los playoffs mientras dure la fase regular) y **no descender** (promedio truncado como se publica + último de la anual, y
+      en el Clausura los descendidos no juegan playoffs). Responde "¿puede?" y "¿está asegurado?" con sí / solo con desempates / no:
+      solo mira puntos, lo empatado lo definirían la diferencia de gol, el mini-torneo o un desempate. Manda sobre el cartel de estado.
+- [x] **Copa asegurada** (`clinched` en `engine/exact.ts`): ✓ en los rankings de Libertadores / Sudamericana y en "¿Qué necesita?".
+      Libertadores = título ya ganado (Apertura, Clausura, Copa Argentina, CONMEBOL) sin poder descender, o top 3 seguro de la anual;
+      "copa" (Libertadores o Sudamericana) = top 9 seguro. Los que ya entraron por un título no cuentan entre los de arriba.
+      Es condición suficiente, no la lista completa (hoy coincide con los que tienen 100% en la simulación).
+- [ ] "¿Puede?" exacto para Libertadores / Sudamericana: el reparto de cupos (art. 27–28) tiene demasiadas reasignaciones; sigue por simulación.
+- [ ] Exacto con los resultados que elige el usuario (hoy el dispositivo no simula ni resuelve nada).
+- [x] En "¿Qué necesita?", tocar el resultado de sus partidos (hasta 5, incluidos los de copa) para fijarlo y ver cómo cambia la chance.
+      No se vuelve a simular: la nube guarda, por equipo y objetivo, cuántas simulaciones salieron con cada combinación de sus
+      resultados y en cuántas lo logró (`scenarios` en `engine/analysis.ts`); la página suma las que coinciden.
+- [x] El Trofeo y la Supercopa Argentina no aparecen como "si gana X": no dan cupos, solo están correlacionados con el objetivo
+      (River podía ganar el Trofeo sin ganar el Clausura, como subcampeón del Apertura, y salía un "si gana el Trofeo → 86%").
 - [x] Mostrar un escenario de ejemplo ("River clasifica si pasa esto"): sale de la simulación.
 
 ### Fase 7: Resultados en vivo  ⏱ 2 sesiones
@@ -228,4 +241,5 @@ Regla clave: **nada fuera de `adapters/` conoce el formato de ESPN.**
 ## 5. Primer paso al volver a la PC
 
 1. `npm install`, `npm run ingest` (actualiza los datos) y `npm run dev`.
-2. Pedir: *"Seguimos con PLAN.md"*: falta la fase 5 (supercopas), la 6 exacta, la 7 (en vivo) y la 8 (deploy). Antes, `npm test` para confirmar que ESPN no cambió.
+2. Pedir: *"Seguimos con PLAN.md"*: falta la Recopa (con fixture 2027), el cuadro de la Copa Argentina, la 7 (en vivo: repensarla
+   sin Cloudflare, ahora que el deploy es GitHub Pages) y hacer público el repo (fase 8). Antes, `npm test` para confirmar que ESPN no cambió.
