@@ -8,6 +8,7 @@ import { Fixture } from './Fixture.tsx';
 import { Loading } from './Loading.tsx';
 import { Simulator } from './Simulator.tsx';
 import { AnnualTable, PromediosTable, ZoneTables } from './tables.tsx';
+import { useLastCheck } from './useLastCheck.ts';
 import { useLeagueData } from './useLeagueData.ts';
 
 const TABS = [
@@ -59,13 +60,22 @@ export function App() {
           </Loading>
         )}
         {data.status === 'error' && <p className="status error">No se pudieron cargar los datos: {data.message}</p>}
-        {data.status === 'ready' && <Content tab={tab} seasons={data.seasons} cups={data.cups} current={data.current} updatedAt={data.updatedAt} />}
+        {data.status === 'ready' && (
+          <Content tab={tab} seasons={data.seasons} cups={data.cups} current={data.current} publishedAt={data.publishedAt} liveAt={data.liveAt} />
+        )}
       </main>
     </div>
   );
 }
 
-function Content({ tab, seasons, cups, current, updatedAt }: { tab: TabId; seasons: SeasonData[]; cups: SeasonData[]; current: number; updatedAt: string }) {
+function Content({ tab, seasons, cups, current, publishedAt, liveAt }: {
+  tab: TabId;
+  seasons: SeasonData[];
+  cups: SeasonData[];
+  current: number;
+  publishedAt: string;
+  liveAt?: string;
+}) {
   const view = useMemo(() => buildLeagueView(seasons, current), [seasons, current]);
   const teams = useMemo(() => {
     const map = new Map<TeamId, Team>();
@@ -83,9 +93,7 @@ function Content({ tab, seasons, cups, current, updatedAt }: { tab: TabId; seaso
       {tab === 'fixture' && <Fixture season={season} view={view} teams={teams} />}
       {tab === 'copas' && <Copas seasons={seasons} cups={cups} current={current} teams={teams} />}
       {tab === 'simulador' && <Simulator seasons={seasons} cups={cups} current={current} teams={teams} />}
-      <p className="updated">
-        Datos: ESPN · actualizado {new Date(updatedAt).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hourCycle: 'h23' })}
-      </p>
+      <Updated publishedAt={publishedAt} liveAt={liveAt} />
     </>
   );
 }
@@ -191,5 +199,24 @@ function NextPromedios({ view, teams }: { view: LeagueView; teams: Map<TeamId, T
         muted={goingDown}
       />
     </section>
+  );
+}
+
+const when = (iso: string) =>
+  new Date(iso).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hourCycle: 'h23', dateStyle: 'short', timeStyle: 'short' });
+
+/**
+ * De cuándo son los datos. La nube revisa cada 5 minutos pero solo publica si algo cambió, así que la hora de publicación
+ * puede ser vieja aunque los datos estén al día: por eso se muestra también la última revisión.
+ */
+function Updated({ publishedAt, liveAt }: { publishedAt: string; liveAt?: string }) {
+  const checkedAt = useLastCheck();
+  const unchangedSince = checkedAt && checkedAt > publishedAt;
+  return (
+    <p className="updated">
+      Datos: ESPN · último cambio {when(publishedAt)}
+      {unchangedSince && ` · revisado ${when(checkedAt)}, sin novedades`}
+      {liveAt && ` · resultados del día consultados ${when(liveAt)}`}
+    </p>
   );
 }

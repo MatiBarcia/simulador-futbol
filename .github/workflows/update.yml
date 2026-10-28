@@ -69,6 +69,7 @@ jobs:
         run: npm run build
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
+          VITE_REPO: ${{ github.repository }} # para mostrar cuándo revisó la nube por última vez (src/ui/useLastCheck.ts)
 
       - uses: actions/upload-pages-artifact@v5
         if: steps.check.outputs.deploy == 'true'

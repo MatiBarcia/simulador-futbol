@@ -14,7 +14,16 @@ interface DataIndex {
 export type LeagueData =
   | { status: 'loading' }
   | { status: 'error'; message: string }
-  | { status: 'ready'; seasons: SeasonData[]; cups: SeasonData[]; current: number; updatedAt: string };
+  | {
+      status: 'ready';
+      seasons: SeasonData[];
+      cups: SeasonData[];
+      current: number;
+      /** Cuándo se publicaron los datos por última vez (solo se publica cuando algo cambió). */
+      publishedAt: string;
+      /** Última consulta de resultados del día hecha desde la página, si hubo. */
+      liveAt?: string;
+    };
 
 /** Cada cuánto se revisa si hay partidos en juego o por empezar (y, si hay, se consulta a ESPN). */
 const POLL_MS = 30_000;
@@ -39,7 +48,7 @@ export function useLeagueData(): LeagueData {
         Promise.all(index.seasons.map(async (s) => parseSeasonData(await getJson(`lpf/${s}.json`)))),
         Promise.all((index.cups ?? []).map(async (c) => parseSeasonData(await getJson(`${c}/${index.current}.json`)))),
       ]);
-      if (!cancelled) setBase({ status: 'ready', seasons, cups, current: index.current, updatedAt: index.updatedAt });
+      if (!cancelled) setBase({ status: 'ready', seasons, cups, current: index.current, publishedAt: index.updatedAt });
     })().catch((e: unknown) => {
       if (!cancelled) setBase({ status: 'error', message: e instanceof Error ? e.message : String(e) });
     });
@@ -55,7 +64,7 @@ export function useLeagueData(): LeagueData {
       ...base,
       seasons: base.seasons.map((s) => applyLive(s, live.matches)),
       cups: base.cups.map((c) => applyLive(c, live.matches)),
-      updatedAt: live.at ?? base.updatedAt,
+      liveAt: live.at,
     };
   }, [base, live]);
 
