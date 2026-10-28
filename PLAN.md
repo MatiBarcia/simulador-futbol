@@ -211,8 +211,11 @@ Regla clave: **nada fuera de `adapters/` conoce el formato de ESPN.**
 - [x] Mostrar un escenario de ejemplo ("River clasifica si pasa esto"): sale de la simulación.
 
 ### Fase 7: Resultados en vivo  ⏱ 2 sesiones
-- [ ] Verificar si ESPN permite CORS desde el navegador (sirve para el prototipo; igual usamos el proxy).
-- [ ] Worker `GET /live?competition=arg.1`: llama al `scoreboard` de hoy vía adapter y devuelve nuestro modelo.
+- [x] ESPN permite CORS (`Access-Control-Allow-Origin: *`). **Cambio de decisión (27/10/2026):** sin proxy; la página consulta
+      directo los resultados del día (`getMatchesOn` del adapter, `engine/live.ts`, `ui/useLeagueData.ts`): cada 30 s revisa si hay
+      partidos en juego, por empezar o atrasados, y solo entonces consulta (un pedido por día y competencia). Con la pestaña oculta,
+      nada. Tablas, fixture y "Jugá los partidos" quedan al día; la simulación espera al workflow y avisa que está desactualizada.
+- [ ] ~~Worker `GET /live?competition=arg.1`~~ (no hace falta por ahora): llama al `scoreboard` de hoy vía adapter y devuelve nuestro modelo.
 - [ ] Caché con la Cache API (~20 s en vivo, más largo sin partidos). **No usar KV para esto** (plan gratis: ~1.000 escrituras/día).
 - [ ] Devolver un TTL / `Cache-Control` para que el cliente sepa cuándo volver a consultar (como promiedos).
 - [ ] Cliente: polling solo si hay partidos en juego o por empezar; pausar con la pestaña oculta (Page Visibility API).
@@ -227,7 +230,10 @@ Regla clave: **nada fuera de `adapters/` conoce el formato de ESPN.**
 - [x] Los datos generados **no se commitean**: van directo al sitio. `public/data/lpf/simulation.json` está en `.gitignore`.
 - [x] El dispositivo **no simula nunca**: las probabilidades son siempre las de la nube (escenario real). Los resultados que elige el
       usuario solo cambian las tablas de "Jugá los partidos" (zonas, anual y promedios), que se calculan al instante.
-- [ ] Hacer el repo público y activar Pages (Settings → Pages → Source: GitHub Actions). Lo hace el dueño del repo.
+- [x] Repo público y Pages activo: https://matibarcia.github.io/simulador-futbol/
+- [x] El `schedule` de GitHub con `*/5` corrió cada 3–6 horas el 27/10. Disparador principal: **cron externo** (cron-job.org →
+      `workflow_dispatch` cada 5 min, `docs/CRON.md`). Las corridas por dispatch publican solo si cambió algo (`force` para forzar).
+- [ ] Configurar el cron externo (cuenta + token, lo hace el dueño: `docs/CRON.md`).
 - [ ] Ojo: GitHub desactiva los workflows programados de un repo público tras 60 días sin actividad en el repo.
 - [ ] (Opcional, con costo) dominio propio.
 

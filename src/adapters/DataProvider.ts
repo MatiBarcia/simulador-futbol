@@ -11,4 +11,6 @@ export interface ProviderSeason {
 export interface DataProvider {
   readonly id: string;
   getSeason(competition: CompetitionId, season: number): Promise<ProviderSeason>;
+  /** Partidos de algunos días (`YYYYMMDD`): para tener los resultados del día sin bajar toda la temporada. */
+  getMatchesOn(competition: CompetitionId, season: number, days: string[]): Promise<Match[]>;
 }

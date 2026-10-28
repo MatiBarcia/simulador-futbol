@@ -29,8 +29,21 @@ export class EspnProvider implements DataProvider {
     return competition === 'lpf' ? this.getLeagueSeason(season) : this.getCupSeason(competition, season);
   }
 
-  private scoreboard(league: string, season: number) {
-    return this.fetchJson<EspnScoreboard>(`${BASE}/site/v2/sports/soccer/${league}/scoreboard?dates=${season}&limit=1000`);
+  /** `dates`: un año (`2026`) o un día (`20261027`). ESPN no acepta rangos. */
+  private scoreboard(league: string, dates: number | string) {
+    return this.fetchJson<EspnScoreboard>(`${BASE}/site/v2/sports/soccer/${league}/scoreboard?dates=${dates}&limit=1000`);
+  }
+
+  async getMatchesOn(competition: CompetitionId, season: number, days: string[]): Promise<Match[]> {
+    const leagues = competition === 'lpf' ? espnLeaguesForSeason(season) : [ESPN_CUP_LEAGUES[competition]];
+    const boards = await Promise.all(leagues.flatMap((league) => days.map(async (day) => ({ league, board: await this.scoreboard(league, day) }))));
+    return boards.flatMap(({ league, board }) =>
+      board.events.flatMap((e) => {
+        if (competition === 'lpf') return [mapEvent(league, e)];
+        const where = mapCupSlug(competition, e.season.slug);
+        return where ? [mapEvent(league, e, where)] : [];
+      }),
+    );
   }
 
   private async getLeagueSeason(season: number): Promise<ProviderSeason> {

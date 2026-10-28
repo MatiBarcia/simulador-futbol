@@ -1,4 +1,6 @@
 # Cada 5 minutos: baja los datos de ESPN y, si cambió algo, recalcula la simulación y publica el sitio en GitHub Pages.
+# El `schedule` de GitHub es poco confiable (a veces corre cada varias horas): el disparador principal es un cron externo
+# (cron-job.org) que llama a workflow_dispatch cada 5 minutos. Ver docs/CRON.md.
 # Los datos nuevos van directo al sitio publicado (no se commitean), así el historial de git no se llena de cambios automáticos.
 name: Actualizar y publicar
 
@@ -8,6 +10,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Publicar aunque no haya cambios (y correr los tests)'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -42,14 +49,15 @@ jobs:
       - name: ¿Cambió algo respecto del sitio publicado?
         id: check
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ]; then
+          # Las corridas automáticas (schedule y el cron externo) publican solo si cambió algo.
+          if [ "${{ github.event_name }}" = "schedule" ] || { [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.force }}" != "true" ]; }; then
             node scripts/should-deploy.ts "$SITE"
           else
             echo "deploy=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Tests
-        if: github.event_name != 'schedule'
+        if: github.event_name == 'push' || inputs.force
         run: npm test
 
       - name: Simulación (reutiliza la publicada si los resultados no cambiaron)

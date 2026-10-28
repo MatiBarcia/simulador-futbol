@@ -84,7 +84,7 @@ function Content({ tab, seasons, cups, current, updatedAt }: { tab: TabId; seaso
       {tab === 'copas' && <Copas seasons={seasons} cups={cups} current={current} teams={teams} />}
       {tab === 'simulador' && <Simulator seasons={seasons} cups={cups} current={current} teams={teams} />}
       <p className="updated">
-        Datos: ESPN · actualizado {new Date(updatedAt).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })}
+        Datos: ESPN · actualizado {new Date(updatedAt).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hourCycle: 'h23' })}
       </p>
     </>
   );
